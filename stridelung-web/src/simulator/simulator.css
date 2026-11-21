@@ -1,0 +1,923 @@
+/* ======================================================================
+   StrideLung Simulator — Biomedical Console Design System
+   Matches the complete StrideLung website design system and visual flow.
+   All colors, borders, shadows and button styles inherit directly from:
+   --anatomy-* (iso.css) and --sl-* (trolley.css).
+   Zero cartoon emojis. Clean SVG icons. Compact, proportional layout.
+   ====================================================================== */
+
+.sim-page {
+  background: var(--anatomy-page);
+  min-height: 100vh;
+  color: var(--anatomy-text);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 56px;
+}
+
+/* ── Top Safety Strip ─────────────────────────────────────── */
+.sim-safety-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: var(--anatomy-card);
+  box-shadow: inset 0 -1px 0 var(--sl-ring);
+  font-family: var(--anatomy-mono);
+  font-size: 10px;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--anatomy-muted);
+}
+.sim-safety-strip svg {
+  flex: none;
+  stroke: var(--anatomy-mid);
+}
+
+/* ── Console Header ───────────────────────────────────────── */
+.sim-top-nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 24px;
+  height: 56px;
+  background: var(--anatomy-card);
+  box-shadow: inset 0 -1px 0 var(--sl-ring);
+}
+.sim-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  text-decoration: none;
+  color: var(--anatomy-strong);
+}
+.sim-brand-text {
+  font-size: 14.5px;
+  font-weight: 650;
+  letter-spacing: -.01em;
+  color: var(--anatomy-strong);
+}
+.sim-brand-sub {
+  font-family: var(--anatomy-mono);
+  font-size: 10.5px;
+  color: var(--anatomy-muted);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.sim-nav-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--sl-ring);
+  flex: none;
+}
+.sim-nav-stats {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-family: var(--anatomy-mono);
+  font-size: 12px;
+}
+.sim-clock-val {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--anatomy-strong);
+  font-variant-numeric: tabular-nums;
+}
+.sim-clock-label {
+  font-size: 10px;
+  color: var(--anatomy-muted);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.sim-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+/* Mode tag — matching site badge conventions */
+.sim-mode-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-family: var(--anatomy-mono);
+  font-size: 10.5px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--anatomy-text);
+  background: var(--anatomy-card);
+  box-shadow: inset 0 0 0 1px var(--sl-ring);
+}
+.sim-mode-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--anatomy-green);
+  flex: none;
+}
+
+/* ── Phase Selector Bar for Clinical Case Study (Alwardt et al., 2022) ── */
+.sim-phase-selector-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sim-phase-title {
+  font-family: var(--anatomy-mono);
+  font-size: 11px;
+  color: var(--anatomy-muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  white-space: nowrap;
+}
+.sim-phase-pills {
+  display: inline-flex;
+  align-items: center;
+  background: var(--anatomy-card);
+  padding: 2px;
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px var(--sl-ring);
+  gap: 2px;
+}
+.sim-phase-pill {
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--anatomy-mid);
+  cursor: pointer;
+  transition: all .14s ease;
+  white-space: nowrap;
+}
+.sim-phase-pill:hover {
+  color: var(--anatomy-strong);
+  background: var(--anatomy-face);
+}
+.sim-phase-pill.active {
+  background: var(--anatomy-strong);
+  color: var(--anatomy-page);
+  font-weight: 600;
+}
+.sim-citation-link {
+  font-family: var(--anatomy-mono);
+  font-size: 10.5px;
+  color: var(--anatomy-blue, #2563eb);
+  text-decoration: none;
+  border-bottom: 1px dashed currentColor;
+  padding-bottom: 1px;
+  transition: opacity .15s ease;
+  white-space: nowrap;
+}
+.sim-citation-link:hover {
+  opacity: .8;
+}
+
+/* Status pill */
+.sim-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-family: var(--anatomy-mono);
+  font-size: 10.5px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  box-shadow: inset 0 0 0 1px var(--sl-ring);
+  background: var(--anatomy-card);
+}
+.sim-status-pill.running {
+  color: var(--anatomy-green);
+}
+.sim-status-pill.paused {
+  color: var(--anatomy-muted);
+}
+.sim-status-pill.stopped {
+  color: var(--anatomy-mid);
+}
+.sim-status-pill i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: none;
+}
+.sim-status-pill.running i {
+  animation: sim-blink 1.4s ease-in-out infinite;
+}
+@keyframes sim-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* Alarm badge */
+.sim-alarm-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-family: var(--anatomy-mono);
+  font-size: 10.5px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  border: 0;
+  box-shadow: inset 0 0 0 1px var(--sl-ring);
+  background: var(--anatomy-card);
+  color: var(--anatomy-muted);
+}
+.sim-alarm-badge.has-crit {
+  color: var(--anatomy-red);
+  box-shadow: inset 0 0 0 1px var(--anatomy-red);
+}
+.sim-alarm-badge.has-warn {
+  color: var(--anatomy-muted);
+  box-shadow: inset 0 0 0 1px var(--sl-ring);
+}
+
+/* ── Global Button Styling (Matches StrideLung Website Flow) ── */
+.sim-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 9px;
+  font: 500 13px/1 var(--font-sans), system-ui, -apple-system, sans-serif;
+  color: var(--anatomy-strong);
+  background: var(--anatomy-card);
+  box-shadow: inset 0 0 0 1px var(--sl-ring), var(--anatomy-lift);
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform .16s var(--anatomy-ease), background .16s var(--anatomy-ease), box-shadow .16s var(--anatomy-ease);
+  user-select: none;
+  white-space: nowrap;
+}
+.sim-btn:hover {
+  background: var(--anatomy-face);
+  color: var(--anatomy-strong);
+}
+.sim-btn:active {
+  transform: scale(.98);
+}
+.sim-btn[aria-pressed="true"],
+.sim-btn.active {
+  box-shadow: inset 0 0 0 1px var(--anatomy-mid);
+  color: var(--anatomy-strong);
+}
+
+.sim-btn.primary {
+  background: var(--anatomy-strong);
+  color: var(--anatomy-page);
+  box-shadow: none;
+}
+.sim-btn.primary:hover {
+  background: color-mix(in srgb, var(--anatomy-strong) 86%, var(--anatomy-page));
+}
+
+.sim-btn.small {
+  height: 30px;
+  padding: 0 11px;
+  font-size: 12px;
+  border-radius: 8px;
+}
+
+.sim-btn.danger {
+  color: var(--anatomy-red);
+}
+.sim-btn.danger:hover {
+  background: color-mix(in srgb, var(--anatomy-red) 8%, var(--anatomy-card));
+}
+
+.sim-btn-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 9px;
+  background: var(--anatomy-card);
+  box-shadow: inset 0 0 0 1px var(--sl-ring), var(--anatomy-lift);
+  color: var(--anatomy-strong);
+  cursor: pointer;
+  transition: transform .16s var(--anatomy-ease), background .16s var(--anatomy-ease);
+}
+.sim-btn-icon:hover {
+  background: var(--anatomy-face);
+}
+.sim-btn-icon:active {
+  transform: scale(.96);
+}
+
+/* ── Main Monitor Box (Compact Dark Enclosure) ────────────── */
+.sim-console-container {
+  max-width: 1140px;
+  margin: 16px auto 0;
+  padding: 0 16px;
+}
+
+/* Reduced size: compact biomedical monitor enclosure */
+.sim-monitor-enclosure {
+  background: #202020;
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), 0 4px 16px rgba(0, 0, 0, 0.22);
+  overflow: hidden;
+  border: 1px solid #303030;
+}
+
+/* Clinical Study Stripe on Monitor — Anatomy styling */
+.sim-clinical-study-stripe {
+  background: #1c1c1c;
+  border-bottom: 1px solid #2a2a2a;
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+}
+.sim-clinical-study-stripe .stripe-tag {
+  font-family: var(--anatomy-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--anatomy-muted);
+  letter-spacing: .06em;
+  flex: none;
+}
+.sim-clinical-study-stripe .stripe-text {
+  color: #a3a3a3;
+  font-size: 11px;
+  line-height: 1.4;
+}
+.sim-clinical-study-stripe .stripe-text strong {
+  color: #f5f5f5;
+}
+
+/* Decreased min-height for compact viewport proportion */
+.sim-monitor-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 200px;
+  min-height: 285px;
+}
+
+/* Left side: 3 Waveform Rows */
+.sim-waveforms-column {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #333333;
+}
+
+/* Compact row height: 94px instead of 145px */
+.sim-wave-row {
+  flex: 1;
+  display: flex;
+  position: relative;
+  min-height: 94px;
+  max-height: 104px;
+  border-bottom: 1px solid #333333;
+}
+.sim-wave-row:last-child {
+  border-bottom: none;
+}
+
+/* Axis indicators on the left */
+.sim-y-axis-labels {
+  width: 28px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 14px 4px 6px 4px;
+  font-family: var(--anatomy-mono);
+  font-size: 8.5px;
+  color: #646464;
+  text-align: right;
+  user-select: none;
+  background: #202020;
+}
+
+/* Waveform Canvas Area */
+.sim-wave-canvas-box {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: #202020;
+}
+.sim-wave-canvas-box canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Header tags inside the waveform box (Paw, cmH2O) */
+.sim-wave-tag-left {
+  position: absolute;
+  top: 4px;
+  left: 8px;
+  font-family: var(--anatomy-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: #999999;
+  letter-spacing: .02em;
+  pointer-events: none;
+  z-index: 2;
+}
+.sim-wave-tag-right {
+  position: absolute;
+  top: 4px;
+  right: 10px;
+  font-family: var(--anatomy-mono);
+  font-size: 9.5px;
+  color: #666666;
+  letter-spacing: .02em;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Right side: Parameters Column in the same dark enclosure */
+.sim-params-column {
+  background: #202020;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 4px 12px;
+  font-family: var(--anatomy-mono);
+  user-select: none;
+}
+
+.sim-param-block {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  padding: 3px 0;
+  border-bottom: 1px solid #2e2e2e;
+}
+.sim-param-block:last-child {
+  border-bottom: none;
+}
+
+.sim-param-line {
+  display: grid;
+  grid-template-columns: 50px 1fr 42px;
+  align-items: baseline;
+  gap: 3px;
+  font-size: 11px;
+  line-height: 1.35;
+}
+.sim-param-name {
+  color: #8c8c8c;
+  white-space: nowrap;
+}
+.sim-param-val {
+  color: #ffffff;
+  font-weight: 600;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  font-size: 12px;
+}
+.sim-param-unit {
+  color: #666666;
+  font-size: 9.5px;
+  padding-left: 2px;
+  white-space: nowrap;
+}
+
+/* ── Middle Action Toolbar (Freeze waveforms | i | Spont Effort) ── */
+.sim-action-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0 14px;
+}
+
+/* ── Setting Panels (Matching Website Flow & Card Structure) ── */
+.sim-panel-group {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sim-card {
+  border-radius: 14px;
+  background: var(--anatomy-card);
+  box-shadow: inset 0 0 0 1px var(--sl-ring);
+  overflow: hidden;
+}
+
+.sim-card-header {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 18px;
+  background: var(--anatomy-shade-2);
+  box-shadow: inset 0 -1px 0 var(--sl-ring);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--anatomy-strong);
+  letter-spacing: -.01em;
+}
+.sim-card-header svg {
+  flex: none;
+  stroke: var(--anatomy-mid);
+}
+
+.sim-card-content {
+  padding: 14px 18px 16px;
+  background: var(--anatomy-card);
+}
+
+/* Controls Grid in Rows */
+.sim-control-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px 16px;
+  align-items: end;
+}
+
+.sim-control-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.sim-item-label {
+  font-size: 11px;
+  color: var(--anatomy-text);
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* Mode Select Box */
+.sim-mode-select {
+  height: 30px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--anatomy-face);
+  color: var(--anatomy-strong);
+  font: 500 12px var(--font-sans), system-ui, sans-serif;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px var(--sl-ring);
+  outline: none;
+  transition: box-shadow .16s var(--anatomy-ease);
+}
+.sim-mode-select:focus {
+  box-shadow: inset 0 0 0 1.5px var(--anatomy-mid);
+}
+
+/* Stepper Component [ - ] [ value ] [ + ] with website styling */
+.sim-stepper-box {
+  display: flex;
+  align-items: stretch;
+  height: 30px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--anatomy-card);
+  box-shadow: inset 0 0 0 1px var(--sl-ring);
+}
+
+.sim-step-btn {
+  width: 28px;
+  border: 0;
+  background: transparent;
+  color: var(--anatomy-muted);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .14s var(--anatomy-ease), color .14s var(--anatomy-ease);
+  user-select: none;
+}
+.sim-step-btn:hover {
+  background: var(--sl-hover);
+  color: var(--anatomy-strong);
+}
+.sim-step-btn:active {
+  transform: scale(.92);
+}
+
+.sim-step-value {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  padding: 0 4px;
+  border-left: 1px solid var(--sl-ring);
+  border-right: 1px solid var(--sl-ring);
+  font-family: var(--anatomy-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--anatomy-strong);
+  background: var(--anatomy-face);
+  font-variant-numeric: tabular-nums;
+  user-select: all;
+}
+
+/* Checkbox control matching website style */
+.sim-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--anatomy-text);
+  cursor: pointer;
+  user-select: none;
+}
+.sim-checkbox-label input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  accent-color: var(--anatomy-strong);
+}
+
+/* ── Alarms & System Status Module ────────────────────────── */
+.sim-alarm-card {
+  margin-top: 14px;
+}
+.sim-alarm-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.sim-alarm-entry {
+  display: grid;
+  grid-template-columns: 8px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 9px 12px;
+  border-radius: 8px;
+  background: var(--anatomy-face);
+  box-shadow: inset 0 0 0 1px var(--sl-ring);
+  font-size: 12.5px;
+}
+.sim-alarm-entry.critical {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--anatomy-red) 35%, transparent);
+  background: color-mix(in srgb, var(--anatomy-red) 5%, var(--anatomy-card));
+}
+.sim-alarm-entry.warning {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sys-electrical) 35%, transparent);
+  background: color-mix(in srgb, var(--sys-electrical) 5%, var(--anatomy-card));
+}
+.sim-alarm-pip {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+}
+.sim-alarm-entry.critical .sim-alarm-pip { background: var(--anatomy-red); }
+.sim-alarm-entry.warning  .sim-alarm-pip { background: var(--sys-electrical); }
+.sim-alarm-entry.info     .sim-alarm-pip { background: var(--anatomy-blue); }
+
+.sim-alarm-count {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-family: var(--anatomy-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .06em;
+}
+.sim-alarm-count.crit {
+  background: color-mix(in srgb, var(--anatomy-red) 12%, transparent);
+  color: var(--anatomy-red);
+}
+.sim-alarm-count.warn {
+  background: color-mix(in srgb, var(--anatomy-muted) 12%, transparent);
+  color: var(--anatomy-muted);
+}
+
+.sim-no-alarms {
+  padding: 10px 0;
+  font-size: 12.5px;
+  color: var(--anatomy-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sim-no-alarms-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--anatomy-green);
+  flex: none;
+}
+.sim-alarm-disclaimer {
+  margin-top: 8px;
+  font-family: var(--anatomy-mono);
+  font-size: 9.5px;
+  color: var(--anatomy-muted);
+  letter-spacing: .04em;
+  line-height: 1.6;
+}
+
+/* ── Interactive Circuit Diagram ──────────────────────────── */
+.sim-circuit-container {
+  margin-top: 14px;
+}
+.sim-circuit-box {
+  background: var(--anatomy-face);
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: inset 0 0 0 1px var(--sl-ring);
+  overflow-x: auto;
+}
+.sim-circuit-legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+  font-size: 12px;
+  color: var(--anatomy-text);
+}
+.sim-circuit-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sim-circuit-legend-line {
+  width: 20px;
+  height: 2px;
+  border-radius: 1px;
+}
+.sim-circuit-info {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: var(--anatomy-face);
+  box-shadow: inset 0 0 0 1px var(--sl-ring);
+  font-size: 12.5px;
+}
+.sim-circuit-info-name {
+  font-weight: 600;
+  color: var(--anatomy-strong);
+  margin-bottom: 3px;
+}
+.sim-circuit-info-sys {
+  display: inline-block;
+  font-family: var(--anatomy-mono);
+  font-size: 9.5px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--anatomy-muted);
+  margin-bottom: 5px;
+}
+.sim-circuit-info-desc {
+  color: var(--anatomy-text);
+  line-height: 1.5;
+  font-size: 12px;
+}
+.sim-circuit-info-reading {
+  margin-top: 5px;
+  font-family: var(--anatomy-mono);
+  font-size: 11px;
+  color: var(--anatomy-blue);
+}
+.sim-circuit-hint {
+  margin-top: 10px;
+  font-family: var(--anatomy-mono);
+  font-size: 9.5px;
+  color: var(--anatomy-muted);
+  letter-spacing: .04em;
+  line-height: 1.6;
+}
+
+/* ── Full Clinical & Laboratory Readings Matrix (Alwardt et al. 2022) ── */
+.sim-readings-panel {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+.sim-readings-group {
+  background: var(--anatomy-card);
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 1px var(--sl-ring);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.sim-readings-group-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--anatomy-strong);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--sl-ring);
+  margin-bottom: 4px;
+}
+.sim-reading-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 11.5px;
+  padding: 2px 0;
+}
+.sim-reading-label {
+  color: var(--anatomy-muted);
+  font-size: 11.5px;
+  white-space: nowrap;
+}
+.sim-reading-value {
+  font-family: var(--anatomy-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--anatomy-strong);
+  font-variant-numeric: tabular-nums;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  white-space: nowrap;
+}
+.sim-reading-value .unit {
+  font-size: 10px;
+  color: var(--anatomy-muted);
+  font-weight: 400;
+}
+.sim-reading-value.warn { color: #d97706; }
+.sim-reading-value.crit { color: var(--anatomy-red); }
+.sim-reading-value.ok   { color: var(--anatomy-green); }
+.sim-status-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 4px;
+}
+.sim-status-dot.ok   { background: var(--anatomy-green); }
+.sim-status-dot.warn { background: #d97706; }
+.sim-status-dot.crit { background: var(--anatomy-red); }
+
+/* ── Technical Engineering Disclaimer Footer ──────────────── */
+.sim-footer-disc {
+  margin: 16px 0 0;
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: var(--anatomy-card);
+  box-shadow: inset 0 0 0 1px var(--sl-ring);
+  font-family: var(--anatomy-mono);
+  font-size: 10px;
+  color: var(--anatomy-muted);
+  line-height: 1.65;
+  letter-spacing: .03em;
+}
+
+/* ── Responsive adjustments ──────────────────────────────── */
+@media (max-width: 960px) {
+  .sim-monitor-grid {
+    grid-template-columns: 1fr;
+  }
+  .sim-waveforms-column {
+    border-right: none;
+    border-bottom: 1px solid #333333;
+  }
+  .sim-params-column {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .sim-param-block {
+    border-bottom: none;
+    border-right: 1px solid #2e2e2e;
+    padding: 0 10px;
+  }
+  .sim-param-block:last-child {
+    border-right: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .sim-control-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .sim-params-column {
+    grid-template-columns: 1fr;
+  }
+  .sim-param-block {
+    border-right: none;
+    border-bottom: 1px solid #2e2e2e;
+  }
+}

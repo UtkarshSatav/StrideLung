@@ -4,8 +4,7 @@ import "../lib/iso/iso.css";
 import "../trolley/trolley.css";
 import "../parallel/parallel.css";
 import "./globals.css";
-import { Header } from "@/site/Header";
-import { Footer } from "@/site/Footer";
+import { SiteShell } from "@/site/SiteShell";
 
 const sans = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono", display: "swap" });
@@ -24,9 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="iso" data-theme="light" suppressHydrationWarning>
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         <a className="skip" href="#main">Skip to content</a>
-        <Header />
-        <main id="main">{children}</main>
-        <Footer />
+        <SiteShell>{children}</SiteShell>
       </body>
     </html>
   );
