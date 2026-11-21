@@ -1,0 +1,15 @@
+{
+  "//": "Generator-only code (runs under Node's TypeScript type stripping, never bundled). Kept out of the app's type-check.",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "allowImportingTsExtensions": true,
+    "allowJs": true,
+    "noEmit": true,
+    "strict": false,
+    "skipLibCheck": true,
+    "verbatimModuleSyntax": true
+  },
+  "include": ["./**/*.ts", "../model.ts", "../../lib/figure/*.ts", "../../../scripts/generate-parallel.ts"]
+}

@@ -1,0 +1,131 @@
+/* Parallel-oxygenator concept figure. Builds on trolley.css (doors, glass, screen, flows) and iso.css.
+   Colours are conventions of the drawing: blue = shared inlet and branch paths, red = merged outlet,
+   amber = gas side not designed, teal = thermal arrangement unresolved. Each is also told apart by pattern
+   (dash rhythm, dashed stub segments, plain capped stubs) and position, never by colour alone. */
+.iso{--pl-blue:#2a78d6;--pl-red:#e34948;--pl-amber:#eda100;--pl-teal:#1baf7a;--pl-dash:rgba(255,255,255,.95);--pl-mix:48%}
+.iso[data-theme="dark"]{--pl-blue:#3987e5;--pl-red:#e66767;--pl-amber:#c98500;--pl-teal:#199e70;--pl-dash:#eef5ff}
+
+/* the card */
+.pl .iso-plate{padding:76px 18px 46px}
+.pl.iso-figure{margin:0}
+.pl-banner{position:absolute;top:34px;left:18px;right:18px;z-index:2;display:flex;align-items:center;justify-content:center;gap:8px;padding:6px 10px;border-radius:8px;
+  font:600 10.5px/1.3 var(--anatomy-mono);letter-spacing:.12em;text-transform:uppercase;text-align:center;color:var(--anatomy-strong);
+  background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--pl-amber) 16%,transparent) 0 8px,transparent 8px 16px),var(--anatomy-card);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pl-amber) 55%,transparent)}
+.pl-banner i{flex:none;width:7px;height:7px;border-radius:50%;background:var(--pl-amber)}
+.pl-stage{position:relative;touch-action:pan-y;cursor:default}
+.pl-stage:focus{outline:none}
+.pl-stage:focus-visible{outline:1px solid var(--anatomy-muted);outline-offset:6px}
+.pl-stage .it,.pl-stage [data-c]{cursor:pointer}
+.pl-stage [data-nonselect],.pl-stage [data-nonselect] *{cursor:default;pointer-events:none}
+
+/* materials of the drawing */
+.pl-clear>.iso-shade{fill:color-mix(in oklab,var(--anatomy-shade-2) 82%,var(--pl-blue) 4%)}
+.pl-bundle{fill:var(--anatomy-shade-1);stroke:none}
+.pl-provisional{fill:var(--anatomy-shade-1);stroke:none}
+.pl-hatch{stroke-width:.4px}
+.pl-bezel{fill:var(--anatomy-shade-2);fill-rule:evenodd;stroke:none}
+.pl-grip{fill:var(--anatomy-shade-2)}
+.pl-blue .tb-body{fill:color-mix(in oklab,var(--pl-blue) var(--pl-mix),var(--anatomy-shade-2))}
+.pl-blue .tb-shine{fill:color-mix(in oklab,var(--pl-blue) calc(var(--pl-mix) * .6),var(--anatomy-top))}
+.pl-blue .tb-shade{fill:color-mix(in oklab,var(--pl-blue) var(--pl-mix),var(--anatomy-shade-0))}
+.pl-red .tb-body{fill:color-mix(in oklab,var(--pl-red) var(--pl-mix),var(--anatomy-shade-2))}
+.pl-red .tb-shine{fill:color-mix(in oklab,var(--pl-red) calc(var(--pl-mix) * .6),var(--anatomy-top))}
+.pl-red .tb-shade{fill:color-mix(in oklab,var(--pl-red) var(--pl-mix),var(--anatomy-shade-0))}
+.iso-solid.pl-blue>.iso-shade{fill:color-mix(in oklab,var(--pl-blue) var(--pl-mix),var(--anatomy-shade-2))}
+.iso-solid.pl-blue>.iso-top{fill:color-mix(in oklab,var(--pl-blue) calc(var(--pl-mix) * .6),var(--anatomy-top))}
+.iso-solid.pl-red>.iso-shade{fill:color-mix(in oklab,var(--pl-red) var(--pl-mix),var(--anatomy-shade-2))}
+.iso-solid.pl-red>.iso-top{fill:color-mix(in oklab,var(--pl-red) calc(var(--pl-mix) * .6),var(--anatomy-top))}
+.iso-solid.pl-amber>.iso-shade{fill:color-mix(in oklab,var(--pl-amber) var(--pl-mix),var(--anatomy-shade-2))}
+.iso-solid.pl-amber>.iso-top{fill:color-mix(in oklab,var(--pl-amber) calc(var(--pl-mix) * .7),var(--anatomy-top))}
+.iso-solid.pl-teal>.iso-shade{fill:color-mix(in oklab,var(--pl-teal) var(--pl-mix),var(--anatomy-shade-2))}
+.iso-solid.pl-teal>.iso-top{fill:color-mix(in oklab,var(--pl-teal) calc(var(--pl-mix) * .7),var(--anatomy-top))}
+.iso-solid.pl-amber>.iso-shade[data-shade="0"]{fill:color-mix(in oklab,var(--pl-amber) var(--pl-mix),var(--anatomy-shade-0))}
+.iso-solid.pl-teal>.iso-shade[data-shade="0"]{fill:color-mix(in oklab,var(--pl-teal) var(--pl-mix),var(--anatomy-shade-0))}
+.pl-boundary .iso-shade,.pl-boundary .iso-top{fill:var(--anatomy-shade-1)}
+
+/* the right side panel turns phantom whenever the case is open, so cartridge B and the inlet block show */
+[data-sidewall] :is(.iso-fill,.iso-shade,.iso-top,.sl-vent,.sl-cavity,.pl-grip){transition:fill-opacity 420ms var(--anatomy-ease)}
+[data-sidewall] .iso-line{transition:opacity 420ms var(--anatomy-ease)}
+.pl-stage:not([data-door="closed"]) [data-sidewall] :is(.iso-fill,.iso-shade,.iso-top,.sl-vent,.sl-cavity,.pl-grip){fill-opacity:.07}
+.pl-stage:not([data-door="closed"]) [data-sidewall] .iso-line{opacity:.5}
+@media (prefers-reduced-motion:reduce){[data-sidewall] *{transition:none}}
+
+/* isolation silhouettes: muted, translucent, never states */
+.pl-sil{opacity:.86;transition:opacity 260ms var(--anatomy-ease)}
+.pl-sil .iso-shade,.pl-sil .iso-top,.pl-sil .iso-fill{fill:var(--anatomy-shade-1)}
+.pl-sil .iso-top{fill:var(--anatomy-shade-2)}
+.pl-sil .iso-line{stroke:var(--anatomy-faint)}
+.pl-stage[data-callout="valves"] .pl-sil{opacity:1}
+.pl-stage[data-callout="valves"] .pl-sil .iso-line{stroke:var(--anatomy-hi)}
+.pl-stage[data-callout="valves"] .pl-sil .iso-top{fill:var(--anatomy-top)}
+
+/* direction highlights: conceptual direction only */
+.pl-stage .sl-flow{stroke-width:1.6}
+.pl-stage .tb-wrap .sl-flow,.pl-stage .tb-wrap .sl-chev{stroke:var(--pl-dash)}
+.pl-stage .sl-flow[data-f="in"],.pl-stage .sl-flow[data-f="a"],.pl-stage .sl-flow[data-f="b"]{stroke-dasharray:6 5}
+.pl-stage .sl-flow[data-f="out"]{stroke-dasharray:11 4}
+.pl-stage [data-sub="fibres"] .sl-flow{stroke:var(--pl-blue);stroke-width:2.2;stroke-dasharray:5 6}
+.pl-stage[data-flows~="in"] [data-f="in"],.pl-stage[data-flows~="a"] [data-f="a"],.pl-stage[data-flows~="b"] [data-f="b"],.pl-stage[data-flows~="out"] [data-f="out"]{display:inline}
+
+/* drawing layers chosen by the scene: lit accent, quiet rest, ghosted other branch */
+.pl-stage{--o-hi:var(--anatomy-hi);--o-mid:var(--anatomy-mid);--o-lo:var(--anatomy-lo);--o-faint:var(--anatomy-faint)}
+.pl-stage .pl-mute{--anatomy-hi:var(--o-lo);--anatomy-mid:var(--o-lo);--anatomy-lo:var(--o-faint);--pl-mix:14%}
+.pl-stage .pl-ghost{opacity:.14;transition:opacity 260ms var(--anatomy-ease)}
+.pl-stage .pl-dim{opacity:.5}
+.pl-stage [data-on]{--anatomy-hi:var(--anatomy-lit);--anatomy-mid:var(--o-hi);--anatomy-lo:var(--o-mid);--pl-mix:62%}
+.pl-stage [data-on] .iso-top,.pl-stage [data-on] .tb-shine{fill:var(--anatomy-lit-top)}
+.pl-stage [data-on] .iso-shade,.pl-stage [data-on] .tb-body{fill:var(--anatomy-lit-shade)}
+.pl-stage [data-on] .pl-blue .tb-body,.pl-stage [data-on].pl-blue .tb-body{fill:color-mix(in oklab,var(--pl-blue) var(--pl-mix),var(--anatomy-lit-shade))}
+.pl-stage [data-on] .pl-blue .tb-shine{fill:color-mix(in oklab,var(--pl-blue) 30%,var(--anatomy-lit-top))}
+.pl-stage [data-on] .pl-red .tb-body{fill:color-mix(in oklab,var(--pl-red) var(--pl-mix),var(--anatomy-lit-shade))}
+.pl-stage [data-on] .pl-red .tb-shine{fill:color-mix(in oklab,var(--pl-red) 30%,var(--anatomy-lit-top))}
+.pl-stage [data-on] [data-seamless]>.iso-shade{stroke:var(--anatomy-lit-shade)}
+.pl-stage [data-on] [data-seamless]>.iso-top{stroke:var(--anatomy-lit-top)}
+.pl-stage .it,.pl-stage .pl-door{transition:opacity 260ms var(--anatomy-ease)}
+
+/* compare with baseline: the inset thumbnail and both "unvalidated" tags */
+.pl-inset{position:absolute;left:0;top:0;width:min(38%,300px);padding:8px 8px 10px;border-radius:12px;background:var(--anatomy-card);box-shadow:inset 0 0 0 1px var(--sl-ring),var(--anatomy-lift);
+  opacity:0;transform:translateY(6px);visibility:hidden;transition:opacity 280ms var(--anatomy-ease),transform 280ms var(--anatomy-ease),visibility 0s 280ms;pointer-events:none}
+.pl-inset svg{display:block;width:100%;height:auto}
+.pl-tag{display:block;font:500 10px/1.35 var(--anatomy-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--anatomy-muted)}
+.pl-tag b{color:var(--anatomy-strong);font-weight:600}
+.pl-tag-main{position:absolute;right:4px;top:0;text-align:right;opacity:0;visibility:hidden;transition:opacity 280ms var(--anatomy-ease),visibility 0s 280ms}
+.pl-stage[data-scene="baseline-compare"] .pl-inset,.pl-stage[data-scene="baseline-compare"] .pl-tag-main{opacity:1;transform:none;visibility:visible;transition-delay:0s}
+@media (prefers-reduced-motion:reduce){.pl-inset,.pl-tag-main,.pl-stage .pl-ghost,.pl-sil{transition:none}}
+
+/* side panel */
+.pl-side{position:sticky;top:76px;display:grid;gap:12px;max-height:calc(100vh - 92px);overflow:auto;padding-right:2px}
+.pl-box{padding:16px;border-radius:14px;background:var(--anatomy-card);box-shadow:inset 0 0 0 1px var(--sl-ring);font-size:13.5px;line-height:1.55}
+.pl-box h3{font-size:14.5px;margin:0 0 6px;letter-spacing:-.01em}
+.pl-box p+p{margin-top:8px}
+.pl-kicker{display:block;margin-bottom:4px;font:500 10px/1.3 var(--anatomy-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--anatomy-muted)}
+.pl-scenes{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.pl-scenes .sl-btn{justify-content:flex-start;border-radius:9px;padding:7px 10px;text-align:left}
+.pl-scenes .sl-btn kbd{font:500 10px/1 var(--anatomy-mono);color:var(--anatomy-muted);min-width:12px}
+.pl-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.pl-note{margin-top:10px;padding:10px 12px;border-radius:10px;font-size:12.5px;line-height:1.5;color:var(--anatomy-text);
+  background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--pl-amber) 10%,transparent) 0 7px,transparent 7px 14px);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pl-amber) 40%,transparent)}
+.pl-steps{display:grid;gap:4px;margin:10px 0 0;padding:0;list-style:none}
+.pl-steps button{all:unset;box-sizing:border-box;display:grid;grid-template-columns:20px 1fr;gap:8px;width:100%;padding:7px 9px;border-radius:9px;cursor:pointer;font-size:13px;color:var(--anatomy-muted)}
+.pl-steps button:hover,.pl-steps button:focus-visible{background:var(--sl-hover);color:var(--anatomy-strong)}
+.pl-steps button[aria-current="step"]{color:var(--anatomy-strong);box-shadow:inset 0 0 0 1px var(--anatomy-mid)}
+.pl-steps .n{font:500 10.5px/1.6 var(--anatomy-mono)}
+.pl-steps small{display:block;margin-top:2px;font-size:12.5px;line-height:1.45;color:var(--anatomy-text)}
+.pl-key{display:grid;gap:7px;margin:0;padding:0;list-style:none;font-size:12.5px}
+.pl-key li{display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:center}
+.pl-sw{height:8px;border-radius:4px}
+.pl-sw[data-sw="in"]{background:var(--pl-blue)}
+.pl-sw[data-sw="out"]{background:var(--pl-red)}
+.pl-sw[data-sw="gas"]{background:repeating-linear-gradient(90deg,var(--pl-amber) 0 6px,transparent 6px 9px);height:6px}
+.pl-sw[data-sw="hx"]{background:var(--pl-teal);height:6px;border-radius:2px 6px 6px 2px}
+.pl-sw[data-sw="sil"]{background:var(--anatomy-shade-1);box-shadow:inset 0 0 0 1px var(--anatomy-faint);opacity:.8}
+.pl-sw[data-sw="hatch"]{background:repeating-linear-gradient(135deg,var(--anatomy-lo) 0 1px,transparent 1px 5px),var(--anatomy-shade-1);height:12px;border-radius:3px}
+.pl-parts{display:grid;gap:14px}
+.pl-parts h3{font:500 10.5px/1.3 var(--anatomy-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--anatomy-muted);margin:0 0 8px}
+.pl-parts .sl-part[disabled]{cursor:not-allowed;opacity:.6}
+.pl-explorer{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px 24px;align-items:start}
+.pl-explorer-main{min-width:0}
+.pl-explorer-list{grid-column:1/-1}
+@media (max-width:1000px){.pl-explorer{grid-template-columns:1fr}.pl-side{position:static;max-height:none;overflow:visible}}
+@media (max-width:640px){.pl .iso-plate{padding:96px 6px 60px}.pl-banner{left:6px;right:6px;top:30px;font-size:9.5px;letter-spacing:.08em}.pl .iso-plate-corner[data-corner="title"]{display:none}
+  .pl-inset{width:46%}.pl-scenes{grid-template-columns:1fr}}

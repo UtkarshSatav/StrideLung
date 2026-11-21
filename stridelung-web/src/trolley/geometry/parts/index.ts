@@ -1,0 +1,30 @@
+// Every component file, in register order. The generator builds them in this order.
+import { part as C01 } from "./C01-case.ts";
+import { part as C02 } from "./C02-chassis.ts";
+import { part as C03 } from "./C03-casters.ts";
+import { part as C04 } from "./C04-push-handle.ts";
+import { part as C05 } from "./C05-oxygenator.ts";
+import { part as C06 } from "./C06-pump-head.ts";
+import { part as C07 } from "./C07-pump-drive.ts";
+import { part as C08 } from "./C08-sensor-interface.ts";
+import { part as C09 } from "./C09-sensor-pods.ts";
+import { part as C10 } from "./C10-flow-bubble-sensor.ts";
+import { part as C11 } from "./C11-oxygen-cylinder.ts";
+import { part as C12 } from "./C12-cylinder-restraint.ts";
+import { part as C13 } from "./C13-gas-control.ts";
+import { part as C14 } from "./C14-gas-lines.ts";
+import { part as C15 } from "./C15-thermal-module.ts";
+import { part as C16 } from "./C16-thermal-hoses.ts";
+import { part as C17 } from "./C17-battery.ts";
+import { part as C18 } from "./C18-power-conversion.ts";
+import { part as C19 } from "./C19-compute.ts";
+import { part as C20 } from "./C20-display.ts";
+import { part as C21 } from "./C21-alarm.ts";
+import { part as C22 } from "./C22-line-panel.ts";
+import { part as C23 } from "./C23-blood-lines.ts";
+import { part as C24 } from "./C24-service-kit.ts";
+import { part as C25 } from "./C25-fluid-allowance.ts";
+import { part as C26 } from "./C26-cables-hardware.ts";
+import { part as C27 } from "./C27-stabilisers.ts";
+
+export const PARTS = [C01, C02, C03, C04, C05, C06, C07, C08, C09, C10, C11, C12, C13, C14, C15, C16, C17, C18, C19, C20, C21, C22, C23, C24, C25, C26, C27];
