@@ -11,6 +11,7 @@ interface WaveformLine {
 
 interface Props {
   lines: WaveformLine[];
+  label?: string;
   timeWindow?: number;
   yMin?: number;
   yMax?: number;
@@ -20,6 +21,7 @@ interface Props {
 
 export function WaveformCanvas({
   lines,
+  label = "Simulated waveform monitor",
   timeWindow = 30,
   yMin,
   yMax,
@@ -139,7 +141,7 @@ export function WaveformCanvas({
     <canvas
       ref={canvasRef}
       style={{ display: "block", width: "100%", height: "100%" }}
-      aria-label="Medical Waveform Monitor"
+      aria-label={label}
     />
   );
 }

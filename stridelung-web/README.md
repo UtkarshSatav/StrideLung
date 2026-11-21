@@ -23,6 +23,10 @@ npm run build && npm start
 The figure data in `src/trolley/generated/` and `src/parallel/generated/` is committed, so the site builds without
 regenerating it.
 
+## Hospital dashboard
+
+The **Hospital dashboard** link opens `/simulator`. Select **Command panel** and choose a unit to see simulated pressure, flow, and pressure-drop waveforms. Adjust the simulation settings or freeze the traces to inspect the time window. Send a fault scenario to update the device status and create an inbox alert with a downloadable snapshot. Acknowledge the event to assign the demo review. The session resets on reload.
+
 ## What's where
 
 ```
@@ -32,6 +36,7 @@ src/
     components/page.tsx          all 27 components, each drawn on its own (filterable)
     components/[slug]/page.tsx   one statically generated page per component
     parallel-oxygenator/page.tsx the parallel-oxygenator concept exploration (figure, review table, topology, limits)
+    simulator/                   hospital dashboard, console simulation, and alert snapshots
   trolley/
     register.ts                  the component register — single source of truth for every row's data
     geometry/                    generator-only code (never shipped to the browser)

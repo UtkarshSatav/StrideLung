@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -12,36 +12,14 @@ const LINKS = [
   ["/#register", "Register"],
   ["/components", "Components"],
   ["/parallel-oxygenator", "Parallel concept"],
-  ["/simulator", "ECMO Simulator"],
+  ["/simulator", "Hospital dashboard"],
 ];
 
 export function Header() {
   const path = usePathname();
   const [open, setOpen] = useState(false);
-  const isHomePage = path === "/";
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    if (!isHomePage) {
-      setIsScrolled(true);
-      return;
-    }
-
-    const handleScroll = () => {
-      // Switch from transparent to frosted navbar once scrolled past 60px
-      setIsScrolled(window.scrollY > 60);
-    };
-
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [isHomePage]);
-
-  // Transparent only on home page when at top of hero
-  const isTransparent = isHomePage && !isScrolled;
-
   return (
-    <header className={`site-header${isTransparent ? " nav-transparent" : " nav-scrolled"}`}>
+    <header className="site-header nav-scrolled">
       <div className="wrap header-row">
         <Link href="/" className="brand" onClick={() => setOpen(false)}>
           <Logo size={26} />

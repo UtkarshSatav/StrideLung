@@ -28,8 +28,8 @@ export default function Home() {
       <Section
         id="subsystems"
         eyebrow="02 · Subsystems"
-        title="Five clinical layers, one integrated chassis."
-        lead="Each subsystem operates on a dedicated hydraulic, pneumatic, or electrical pathway. Select any layer to isolate its circuitry and activate animated telemetry in the 3D model."
+        title="Five subsystems in one trolley"
+        lead="Select a layer to isolate its components and trace its illustrated routes in the model."
         className="section-subsystems"
       >
         <Subsystems />
@@ -45,8 +45,8 @@ export default function Home() {
       <Section
         id="budget"
         eyebrow="04 · Mass budget"
-        title="26.78 kg, counted once."
-        lead="Every row is an allocation. The integral valve, the battery case and BMS, and the illustrative fluid are already inside their rows; nothing is added twice. The patient, ventilator, monitor and unlisted consumables are excluded."
+        title="28 kg loaded design target"
+        lead="The mass budget uses proposed component allocations and a 20% contingency. It covers the trolley and the items in its register."
         className="section-budget"
       >
         <MassBudget />

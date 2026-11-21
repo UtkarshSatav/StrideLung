@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
+import HospitalDashboard from "./HospitalDashboard";
+import "./dashboard.css";
+import "./console.css";
 
 export const metadata: Metadata = {
-  title: "ECMO Simulator — StrideLung",
-  description: "Interactive ECMO / artificial lung control panel and software simulator. Educational engineering simulation only — not connected to medical hardware.",
+  title: "Hospital dashboard",
+  description: "Simulated StrideLung fleet, interactive device console, and hospital alert inbox.",
 };
 
-export { default } from "./SimulatorPage";
+export default HospitalDashboard;
 

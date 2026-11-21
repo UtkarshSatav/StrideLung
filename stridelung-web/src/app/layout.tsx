@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "../lib/iso/iso.css";
 import "../trolley/trolley.css";
 import "../parallel/parallel.css";
 import "./globals.css";
+import "./product.css";
 import { SiteShell } from "@/site/SiteShell";
 
-const sans = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
-const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono", display: "swap" });
+const sans = localFont({ src: "./fonts/inter-latin.woff2", weight: "100 900", variable: "--font-sans", display: "swap" });
+const mono = localFont({ src: "./fonts/jetbrains-mono.woff2", weight: "400", variable: "--font-mono", display: "swap" });
 
 export const metadata: Metadata = {
   title: { default: "StrideLung 01 — ECMO support, packed to walk", template: "%s · StrideLung 01" },

@@ -30,13 +30,13 @@ export function MassBudget() {
       {/* Top Telemetry Header */}
       <div className="mass-hud-grid">
         <div className="hud-metric-card primary">
-          <span className="hud-label eyebrow">Total Planning Mass</span>
+          <span className="hud-label eyebrow">Loaded Design Target</span>
           <div className="hud-value-row">
-            <span className="hud-num mono">{MASS.total.toFixed(2)}</span>
+            <span className="hud-num mono">{ceiling}</span>
             <span className="hud-unit mono">kg</span>
           </div>
           <p className="hud-sub">
-            Includes all 27 hardware rows + 20% regulatory contingency
+            Current modeled allocation is {MASS.total.toFixed(2)} kg including contingency
           </p>
         </div>
 
@@ -47,7 +47,7 @@ export function MassBudget() {
             <span className="hud-unit mono">kg</span>
           </div>
           <p className="hud-sub">
-            4.36% buffer under the 28.00 kg supervised mobility limit
+            Difference between the modeled allocation and the design target
           </p>
         </div>
 
@@ -69,7 +69,7 @@ export function MassBudget() {
             <span className="hud-unit mono">kg</span>
           </div>
           <p className="hud-sub">
-            Standard 20% growth allocation for brackets & fittings
+            20% planning allowance for design growth
           </p>
         </div>
       </div>
@@ -78,7 +78,7 @@ export function MassBudget() {
       <div className="mass-track-card">
         <div className="track-head">
           <span className="track-title">Subsystem Allocation Rail</span>
-          <span className="track-capacity mono">Target Capacity: 28.00 kg max</span>
+          <span className="track-capacity mono">Design target · {ceiling} kg</span>
         </div>
 
         <div className="track-rail-container" onPointerLeave={() => setTip(null)}>

@@ -46,6 +46,7 @@ export type Engine = {
   setBlocked(on: boolean): void;
   reset(): void;
   stopTour(): void;
+  setAutoTour(on: boolean): void;
   destroy(): void;
   getState(): EngineState;
 };
@@ -113,6 +114,7 @@ export function createEngine(root: HTMLElement, scene: EngineScene, opts: { onSt
   const state: EngineState = { view: "assembled", flows: [], layer: "all", selected: null, hovered: null, gasExternal: false, blocked: false, touring: false, status: "" };
   let clock = 0, apart = false, frame = 0, last = 0, visible = false, rotor = 0, flowT = 0, wasMoving = false;
   let tourClock = 0, tourStep = -1, idleTimer = 0 as unknown as ReturnType<typeof setTimeout>;
+  let autoTour = opts.autoTour !== false;
   let lastEmit = "";
 
   const emit = () => {
@@ -370,7 +372,7 @@ export function createEngine(root: HTMLElement, scene: EngineScene, opts: { onSt
   }
   function scheduleTour(delay: number) {
     clearTimeout(idleTimer);
-    if (still.matches || opts.autoTour === false) return;
+    if (still.matches || !autoTour) return;
     idleTimer = setTimeout(() => {
       if (state.selected || state.flows.length || state.layer !== "all" || state.view !== "assembled" || state.blocked || state.gasExternal) return;
       state.touring = true;
@@ -579,7 +581,7 @@ export function createEngine(root: HTMLElement, scene: EngineScene, opts: { onSt
   drawRotor();
   say();
   emit();
-  if (opts.autoTour !== false) scheduleTour(2500);
+  if (autoTour) scheduleTour(2500);
 
   return {
     setView: (v) => {
@@ -613,6 +615,11 @@ export function createEngine(root: HTMLElement, scene: EngineScene, opts: { onSt
     },
     reset,
     stopTour,
+    setAutoTour(on) {
+      autoTour = on;
+      reset();
+      if (on) scheduleTour(100);
+    },
     destroy() {
       cancelAnimationFrame(frame);
       clearTimeout(idleTimer);

@@ -7,17 +7,17 @@ import type { ReactNode } from "react";
 
 export function SiteShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const isSimulator = pathname === "/simulator" || pathname?.startsWith("/simulator");
+  const isDashboard = pathname === "/simulator" || pathname === "/simulator/";
 
-  if (isSimulator) {
+  if (isDashboard) {
     return <main id="main">{children}</main>;
   }
 
   return (
-    <>
+    <div className="product-site">
       <Header />
       <main id="main">{children}</main>
       <Footer />
-    </>
+    </div>
   );
 }

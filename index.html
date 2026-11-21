@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f7fb">
+  <title>StrideLung | Hospital Operations Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#overview" aria-label="StrideLung home">
+        <span class="brand-mark"><svg viewBox="0 0 36 36" aria-hidden="true"><path d="M18 5v10m0 0c-2-4-7-5-10-2-4 4-2 13 2 17 3 2 7 0 8-4m0-11c2-4 7-5 10-2 4 4 2 13-2 17-3 2-7 0-8-4"/><path d="M18 15v14"/></svg></span>
+        <span><strong>StrideLung</strong><small>HOSPITAL OPERATIONS</small></span>
+      </a>
+      <div class="workspace-label">WORKSPACE</div>
+      <button class="hospital-select" id="hospitalSelect"><span class="hospital-icon">S</span><span><b>St. Anne's Medical Center</b><small>Demo hospital</small></span><span class="chevron">⌄</span></button>
+      <nav class="nav" aria-label="Main navigation">
+        <div class="nav-group-label">OPERATIONS</div>
+        <button class="nav-item active" data-view="overview"><span class="nav-icon">◫</span>Overview</button>
+        <button class="nav-item" data-view="devices"><span class="nav-icon">▣</span>Device fleet <span class="nav-count">8</span></button>
+        <button class="nav-item" data-view="assignments"><span class="nav-icon">◇</span>Assignments</button>
+        <button class="nav-item" data-view="alerts"><span class="nav-icon">♧</span>Alerts <span class="nav-count urgent-count" id="navAlertCount">2</span></button>
+        <button class="nav-item" data-view="service"><span class="nav-icon">◷</span>Service &amp; circuits</button>
+        <div class="nav-group-label lower">BUSINESS</div>
+        <button class="nav-item" data-view="commercial"><span class="nav-icon">▤</span>Commercial scenario</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="live-card"><span class="live-dot"></span><div><b>Demo environment</b><small>No device connection</small></div></div>
+        <div class="profile"><div class="avatar">AS</div><div><b>Alex Shah</b><small>Hospital administrator</small></div><span class="more">•••</span></div>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <div class="crumbs"><span>StrideLung</span><span class="slash">/</span><b id="topTitle">Overview</b></div>
+        <div class="top-actions"><span class="demo-pill"><i></i> DEMO DATA</span><button class="icon-button" title="Help">?</button><div class="avatar small-avatar">AS</div></div>
+      </header>
+      <div class="safety-banner"><span class="banner-icon">ⓘ</span><div><b>Simulation only</b><span> Synthetic device and patient records. Not connected to equipment, clinical systems, or real people. Not for care decisions.</span></div><button id="dismissBanner" aria-label="Dismiss notice">×</button></div>
+
+      <section class="view active-view" id="view-overview">
+        <div class="page-heading"><div><div class="eyebrow">SATURDAY, NOVEMBER 21, 2026 <span class="sync"><i></i> Demo feed active</span></div><h1>Good evening, Alex <span class="wave">✦</span></h1><p>Here’s the current simulated fleet and response queue.</p></div><button class="primary-button" id="simulateAlert"><span>＋</span> Simulate an event</button></div>
+        <div class="stats-grid">
+          <article class="stat-card"><div class="stat-head"><span>Fleet units</span><span class="stat-icon blue">▣</span></div><div class="stat-value">08 <small>units</small></div><div class="stat-foot"><span class="muted">6 assigned</span><span class="subtle">2 available</span></div><div class="mini-bars"><i style="height:38%"></i><i style="height:56%"></i><i style="height:44%"></i><i style="height:72%"></i><i style="height:55%"></i><i style="height:82%"></i><i style="height:65%"></i><i style="height:92%"></i></div></article>
+          <article class="stat-card"><div class="stat-head"><span>Active assignments</span><span class="stat-icon teal">◇</span></div><div class="stat-value">06 <small>of 08</small></div><div class="stat-foot"><span class="positive">● 6 device records linked</span></div><div class="progress-track"><i style="width:75%"></i></div></article>
+          <article class="stat-card"><div class="stat-head"><span>Open alerts</span><span class="stat-icon orange">♧</span></div><div class="stat-value" id="openAlertMetric">02 <small>require review</small></div><div class="stat-foot"><span class="warning-text">1 high priority</span><span class="subtle"> · 1 routine</span></div><div class="alert-spark"><span>Mon</span><i style="height:24%"></i><i style="height:40%"></i><i style="height:30%"></i><i style="height:62%"></i><i style="height:44%"></i><i style="height:88%"></i><i style="height:56%"></i><span>Today</span></div></article>
+          <article class="stat-card"><div class="stat-head"><span>Service reminders</span><span class="stat-icon violet">◷</span></div><div class="stat-value">03 <small>this week</small></div><div class="stat-foot"><span class="muted">2 inspections</span><span class="subtle">1 consumable check</span></div><div class="service-dots"><i></i><i></i><i></i><i></i><i></i><i></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div></article>
+        </div>
+        <div class="content-grid">
+          <section class="panel fleet-panel"><div class="panel-heading"><div><h2>Device fleet</h2><p>Latest simulated status by assigned unit</p></div><button class="text-button" data-go="devices">View fleet <span>→</span></button></div><div class="table-wrap"><table><thead><tr><th>DEVICE / MODEL</th><th>ASSIGNMENT</th><th>STATUS</th><th>LAST UPDATE</th><th></th></tr></thead><tbody id="fleetRows"></tbody></table></div><div class="panel-bottom"><span class="legend-dot green"></span> Simulation feed current <span class="updated">Updated just now</span></div></section>
+          <section class="panel alerts-panel"><div class="panel-heading"><div><h2>Needs attention</h2><p>Prioritized demo events</p></div><button class="round-arrow" data-go="alerts">→</button></div><div id="alertPreview"></div><button class="outline-button full-button" data-go="alerts">Open alert center <span>→</span></button></section>
+        </div>
+        <section class="panel workflow-panel"><div class="panel-heading"><div><h2>Response workflow</h2><p>A clear handoff from event detection to documented review</p></div><span class="workflow-label"><i></i> SIMULATED FLOW</span></div><div class="workflow-steps"><div class="flow-step"><span class="step-no">01</span><span class="step-icon">⌁</span><b>Event recorded</b><small>Device event enters the demo feed</small></div><span class="flow-connector">··········›</span><div class="flow-step"><span class="step-no">02</span><span class="step-icon amber-icon">♧</span><b>Alert created</b><small>Priority, time and snapshot attached</small></div><span class="flow-connector">··········›</span><div class="flow-step"><span class="step-no">03</span><span class="step-icon">✓</span><b>Team acknowledges</b><small>Demo user records ownership</small></div><span class="flow-connector">··········›</span><div class="flow-step"><span class="step-no">04</span><span class="step-icon">▤</span><b>Action documented</b><small>Event remains in local history</small></div></div></section>
+      </section>
+
+      <section class="view" id="view-devices"><div class="page-heading"><div><div class="eyebrow">OPERATIONS / FLEET</div><h1>Device fleet</h1><p>Inventory and simulated connectivity state for this hospital.</p></div><button class="primary-button" id="addDevice">＋ Add demo unit</button></div><div class="filter-row"><div class="search-box">⌕ <input id="deviceSearch" placeholder="Search by device ID or location"></div><select id="statusFilter"><option value="all">All statuses</option><option value="Review">Needs review</option><option value="Ready">Ready</option><option value="Offline">Offline</option></select><span class="demo-label">Synthetic inventory</span></div><section class="panel"><div class="table-wrap"><table><thead><tr><th>DEVICE / MODEL</th><th>ASSIGNMENT</th><th>STATUS</th><th>LAST UPDATE</th><th></th></tr></thead><tbody id="deviceRows"></tbody></table></div></section></section>
+
+      <section class="view" id="view-assignments"><div class="page-heading"><div><div class="eyebrow">OPERATIONS / ASSIGNMENTS</div><h1>Assignments</h1><p>Demo records connecting fictional case IDs, locations and fleet units.</p></div><button class="primary-button" id="newAssignment">＋ New demo assignment</button></div><div class="assignment-grid" id="assignmentCards"></div><div class="note-card"><b>Privacy by design in this demo</b><p>Cases use fictional identifiers only. A real deployment would require hospital-approved identity, access, audit, security, and data-retention controls before any patient information is handled.</p></div></section>
+
+      <section class="view" id="view-alerts"><div class="page-heading"><div><div class="eyebrow">OPERATIONS / EVENT MANAGEMENT</div><h1>Alert center</h1><p>Review the simulated event, inspect its generated snapshot, and record the next handoff.</p></div><button class="primary-button" id="simulateAlert2">＋ Simulate an event</button></div><div class="alert-toolbar"><div class="segmented"><button class="selected" data-alert-filter="all">All <span id="allAlertCount">0</span></button><button data-alert-filter="open">Open <span id="openAlertCount">0</span></button><button data-alert-filter="acknowledged">Acknowledged</button></div><span class="demo-label">No calls, texts, or pages are sent</span></div><div class="alert-list" id="alertList"></div></section>
+
+      <section class="view" id="view-service"><div class="page-heading"><div><div class="eyebrow">OPERATIONS / SERVICE</div><h1>Service &amp; circuits</h1><p>Track demo inspection records and consumable references.</p></div><button class="outline-button" id="addService">＋ Log demo check</button></div><div class="service-callout"><span class="callout-icon">ⓘ</span><div><b>Replacement timing must follow the validated product instructions</b><p>The 14-day interval mentioned in the concept is an unverified planning assumption. This demo does not calculate or recommend a clinical replacement date.</p></div></div><section class="panel"><div class="panel-heading"><div><h2>Upcoming service records</h2><p>Example records for prototype walkthrough only</p></div><span class="status-chip neutral">IFU / service policy pending</span></div><div class="table-wrap"><table><thead><tr><th>DEVICE</th><th>RECORD TYPE</th><th>DUE / REVIEW</th><th>ASSIGNED TEAM</th><th>STATUS</th></tr></thead><tbody id="serviceRows"></tbody></table></div></section><div class="two-cards"><div class="panel small-panel"><span class="stat-icon violet">◷</span><h3>Maintenance plan</h3><p>Schedules are configurable only after manufacturer instructions and hospital policy are established.</p><span class="status-chip neutral">Not validated</span></div><div class="panel small-panel"><span class="stat-icon teal">▣</span><h3>Consumables inventory</h3><p>Supplier quote and compatibility approval are still required for circuit and oxygenator kits.</p><span class="status-chip neutral">Quote required</span></div></div></section>
+
+      <section class="view" id="view-commercial"><div class="page-heading"><div><div class="eyebrow">BUSINESS / PLANNING MODEL</div><h1>Commercial scenario</h1><p>Illustrative calculations transcribed from your screenshots; edit assumptions to explore the arithmetic.</p></div><span class="assumption-badge">UNVALIDATED ASSUMPTIONS</span></div><div class="commercial-banner"><b>Planning scenario, not a quote or forecast.</b> Manufacturing, service, consumable, regulatory and clinical costs require supplier, hospital and regulatory validation. Hospital procedure charges are hospital revenue, not company revenue.</div><div class="commercial-inputs panel"><div><label for="priceInput">List price per unit</label><div class="money-input"><span>₹</span><input id="priceInput" type="number" value="250000" step="5000"></div></div><div><label for="discountInput">Institutional discount</label><div class="money-input"><input id="discountInput" type="number" value="10" min="0" max="100"><span>%</span></div></div><div><label for="unitsInput">Units sold (scenario)</label><div class="money-input"><input id="unitsInput" type="number" value="10" min="1" max="100"></div></div><div><label for="mfgInput">Manufacturing cost / unit</label><div class="money-input"><span>₹</span><input id="mfgInput" type="number" value="150000" step="5000"></div></div><div><label for="directInput">Install + warranty / unit</label><div class="money-input"><span>₹</span><input id="directInput" type="number" value="20000" step="1000"></div></div></div><div class="commercial-kpis" id="commercialKpis"></div><div class="content-grid commercial-grid"><section class="panel"><div class="panel-heading"><div><h2>Per-unit calculation</h2><p>Contribution before fixed costs, R&amp;D, regulation and tax</p></div></div><div class="calc-table" id="calcTable"></div></section><section class="panel"><div class="panel-heading"><div><h2>Recurring scenario</h2><p>Assumes 10 hospitals each pay annually</p></div></div><div class="recurring-line"><span>Annual AMC per unit</span><b>₹20,000</b></div><div class="recurring-line"><span>Portal subscription per hospital</span><b>₹12,000</b></div><div class="recurring-line"><span>Combined annual billing × 10</span><b>₹3,20,000</b></div><div class="recurring-note">Consumable circuit / oxygenator pricing is excluded until supplier quotations and compatibility are confirmed.</div></section></div></section>
+      <footer class="page-footer"><span>StrideLung concept portal <b>·</b> Demo build 0.1</span><span>Simulation only · All records are synthetic</span></footer>
+    </main>
+  </div>
+  <dialog id="deviceDialog" class="detail-dialog"><form method="dialog"><button class="dialog-close" aria-label="Close">×</button></form><div id="deviceDetail"></div></dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>

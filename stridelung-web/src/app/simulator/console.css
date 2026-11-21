@@ -1,0 +1,125 @@
+.device-console {
+  --console-mono: var(--font-mono, ui-monospace), SFMono-Regular, Consolas, monospace;
+  margin-top: 1rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.console-display {
+  background: #202020;
+  color: #f4f5f4;
+  border: 1px solid #454744;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.console-display-top, .console-display-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: .5rem .9rem;
+  background: #191b19;
+  padding: .7rem 1rem;
+  font-family: var(--console-mono);
+  font-size: .8rem;
+  color: #bec4bd;
+}
+
+.console-display-top > div { display: flex; align-items: baseline; flex-wrap: wrap; gap: .2rem .9rem; }
+.console-display-top strong { color: #fff; font: 700 .95rem var(--console-mono); }
+.console-display-foot { border-top: 1px solid #3d403c; }
+.console-status { color: #67df9a; white-space: nowrap; }
+.console-status.offline { color: #ffb28a; }
+
+.console-monitor-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(13.6rem, 23%);
+  border-top: 1px solid #3d403c;
+}
+
+.console-traces { min-width: 0; }
+.console-trace { padding: .65rem .8rem .55rem; }
+.console-trace + .console-trace { border-top: 1px solid #3d403c; }
+.console-trace-heading, .console-legend { display: flex; align-items: center; gap: .4rem .8rem; flex-wrap: wrap; }
+.console-trace-heading { justify-content: space-between; margin-left: 2.5rem; color: #daded8; font: .82rem var(--console-mono); }
+.console-trace-heading b { font-weight: 550; }
+.console-legend { color: #b8beb6; font-size: .75rem; }
+.console-legend i { display: inline-block; width: .65rem; height: 2px; margin: 0 .3rem .18rem 0; }
+.console-plot { display: grid; grid-template-columns: 2rem minmax(0, 1fr); align-items: stretch; gap: .5rem; margin-top: .6rem; }
+.console-axis { display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; color: #b2b6af; font: .72rem/1 var(--console-mono); }
+.console-canvas { position: relative; min-width: 0; height: clamp(4.6rem, 9.5vw, 7rem); border: 1px solid #353835; }
+.console-no-data { position: absolute; inset: 0; display: grid; place-items: center; color: #ffb28a; font: .83rem var(--console-mono); }
+
+.console-readout {
+  margin: 0;
+  min-width: 0;
+  border-left: 1px solid #3d403c;
+  padding: .65rem 1rem;
+  display: grid;
+  align-content: center;
+  gap: .38rem;
+  font: .82rem/1.4 var(--console-mono);
+}
+.console-readout > div { display: flex; justify-content: space-between; gap: .35rem; flex-wrap: wrap; }
+.console-readout > div:nth-child(4n + 1):not(:first-child) { border-top: 1px solid #41433f; padding-top: .55rem; margin-top: .24rem; }
+.console-readout dt { color: #c0c6be; }
+.console-readout dd { margin: 0; color: #f4f5f4; font-weight: 700; }
+.console-readout dd.green { color: #65e69c; }
+.console-readout dd.orange { color: #ffad77; }
+.console-readout small { font-size: .73rem; color: #bac0b9; font-weight: 400; margin-left: .3rem; }
+
+.console-toolbar, .console-window { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.console-toolbar { justify-content: space-between; padding: .65rem; background: var(--ops-panel); border: 1px solid var(--ops-line); }
+.ops .console-toolbar button:disabled { background: var(--ops-panel); color: var(--ops-muted); cursor: default; }
+.console-window { gap: 0; border: 1px solid var(--ops-control-line); border-radius: 2px; overflow: hidden; }
+.ops .console-window button { border: 0; border-radius: 0; padding-inline: .85rem; }
+.ops .console-window button + button { border-left: 1px solid var(--ops-control-line); }
+.ops .console-window button[aria-pressed="true"] { background: var(--ops-wash); color: var(--ops-orange); box-shadow: inset 0 -2px var(--ops-accent); }
+.ops .console-window button:focus-visible { outline-offset: -3px; }
+
+.console-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 2.2fr) minmax(15.5rem, 1fr);
+  border: 1px solid var(--ops-line);
+  background: var(--ops-line);
+  gap: 1px;
+}
+.console-panel { min-width: 0; background: #fff; }
+.console-panel-head { background: var(--ops-panel); border-bottom: 1px solid var(--ops-line); padding: .9rem 1rem; }
+.console-panel-head p { margin-top: .26rem; font-size: .875rem; }
+.console-settings {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  background: var(--ops-line);
+  gap: 1px;
+  padding-bottom: 1px;
+}
+.console-settings > * { min-width: 0; padding: .8rem; background: #fff; }
+.console-settings > :last-child { grid-column: span 2; }
+.console-setting { display: grid; align-content: space-between; gap: .35rem; font-size: .875rem; font-weight: 650; }
+.console-stepper { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; border: 1px solid var(--ops-control-line); border-radius: 2px; overflow: hidden; }
+.console-stepper output { display: grid; place-items: center; background: var(--ops-panel); font: 650 .9rem var(--console-mono); }
+.ops .console-stepper button { border: 0; border-radius: 0; padding-inline: .65rem; }
+.ops .console-stepper button:hover { background: var(--ops-wash); }
+.ops .console-stepper button:focus-visible { outline-offset: -3px; }
+.ops .console-stepper button:disabled { background: var(--ops-panel); color: var(--ops-muted); cursor: default; }
+.console-scenarios { display: grid; gap: .55rem; padding: .9rem 1rem 1rem; }
+
+@media (max-width: 1040px) {
+  .console-monitor-grid { grid-template-columns: minmax(0, 1fr) minmax(11rem, 31%); }
+  .console-readout { padding-inline: .7rem; }
+}
+
+@media (max-width: 820px) {
+  .console-controls { grid-template-columns: 1fr; }
+  .console-monitor-grid { grid-template-columns: 1fr; }
+  .console-readout { grid-template-columns: repeat(auto-fit, minmax(9.4rem, 1fr)); border-left: 0; border-top: 1px solid #3d403c; padding: .75rem; gap: .6rem 1rem; }
+  .console-readout > div { display: block; }
+  .console-readout > div:nth-child(n) { border: 0; padding: 0; margin: 0; }
+}
+
+@media (max-width: 620px) {
+  .console-settings { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .console-settings > * { padding: .65rem; }
+}

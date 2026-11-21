@@ -1,7 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { REGISTER, SUBSYSTEMS, type SubsystemId } from "@/trolley/register";
+import { REGISTER, MASS, SUBSYSTEMS, type SubsystemId } from "@/trolley/register";
 import { useTrolley } from "@/trolley/TrolleyProvider";
 import { Chip } from "@/trolley/Chip";
 
@@ -150,7 +150,7 @@ export function RegisterTable() {
               <td className="text-right mono small">Filtered Total:</td>
               <td className="cell-mass mono bold">{totalMass.toFixed(2)} kg</td>
               <td colSpan={3} className="summary-right small muted">
-                Full 27-part baseline = 22.31 kg (+20% contingency = 26.78 kg)
+                Full register: {MASS.sum.toFixed(2)} kg · With contingency: {MASS.total.toFixed(2)} kg · Design target: {MASS.ceiling} kg
               </td>
             </tr>
           </tfoot>

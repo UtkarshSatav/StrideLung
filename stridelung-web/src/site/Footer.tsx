@@ -76,11 +76,11 @@ export function Footer() {
               <span>CONCEPT SPECIFICATION · REVISION 0.1</span>
             </div>
             <h2 className="footer-hero-heading">
-              Engineered for ambulation.<br />
-              <span className="footer-hero-highlight">Designed to free critical care.</span>
+              StrideLung 01<br />
+              <span className="footer-hero-highlight">ECMO trolley concept</span>
             </h2>
             <p className="footer-hero-sub">
-              Consolidating an ICU-grade VV ECMO circuit into a single patient-towable trolley under 28 kg — liberating bed-bound patients for safe hospital corridor mobilisation.
+              A single trolley concept for a care team to move during supervised rehabilitation. The loaded design target is 28 kg.
             </p>
           </div>
 
@@ -93,7 +93,7 @@ export function Footer() {
               </svg>
             </Link>
             <Link href="/simulator" className="designer-btn ghost">
-              <span>ECMO Simulator</span>
+              <span>Hospital dashboard</span>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="7" y1="17" x2="17" y2="7" />
                 <polyline points="7 7 17 7 17 17" />
@@ -192,7 +192,7 @@ export function Footer() {
               <li><Link href="/#register">Hardware BOM Register</Link></li>
               <li><Link href="/components">All 27 Component Specs</Link></li>
               <li><Link href="/parallel-oxygenator">Dual-Cartridge Parallel Concept</Link></li>
-              <li><Link href="/simulator">ECMO Clinical Simulator</Link></li>
+              <li><Link href="/simulator">Hospital dashboard</Link></li>
             </ul>
           </div>
 
