@@ -38,6 +38,8 @@
   "exclude": [
     "node_modules",
     "src/trolley/geometry",
+    "src/parallel/geometry",
+    "src/lib/figure",
     "scripts",
     "src/lib/iso"
   ]

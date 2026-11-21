@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "../lib/iso/iso.css";
 import "../trolley/trolley.css";
+import "../parallel/parallel.css";
 import "./globals.css";
 import { Header } from "@/site/Header";
 import { Footer } from "@/site/Footer";

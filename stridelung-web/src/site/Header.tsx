@@ -11,6 +11,7 @@ const LINKS = [
   ["/#budget", "Mass budget"],
   ["/#register", "Register"],
   ["/components", "Components"],
+  ["/parallel-oxygenator", "Parallel concept"],
 ];
 
 export function Header() {
@@ -26,7 +27,7 @@ export function Header() {
         </Link>
         <nav className={`nav${open ? " open" : ""}`} aria-label="Main">
           {LINKS.map(([href, label]) => (
-            <Link key={href} href={href} className="nav-link" aria-current={href === "/components" && path?.startsWith("/components") ? "page" : undefined} onClick={() => setOpen(false)}>
+            <Link key={href} href={href} className="nav-link" aria-current={href.startsWith("/#") ? undefined : path?.startsWith(href) ? "page" : undefined} onClick={() => setOpen(false)}>
               {label}
             </Link>
           ))}

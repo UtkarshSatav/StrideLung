@@ -10,6 +10,7 @@ import { Evidence } from "@/site/Evidence";
 import { RegisterTable } from "@/site/RegisterTable";
 import { Limits } from "@/site/Limits";
 import { Sources } from "@/site/Sources";
+import { ParallelTeaser } from "@/site/ParallelTeaser";
 
 export default function Home() {
   return (
@@ -42,10 +43,13 @@ export default function Home() {
       <Section id="register" eyebrow="07 · Component register" title="All 27 components." lead="Sort, filter or search the register. Each row opens its own page, or shows the component in the model.">
         <RegisterTable />
       </Section>
-      <Section id="limits" eyebrow="08 · Limits" title="Concept packaging — not a clinical device.">
+      <Section id="parallel" eyebrow="08 · Concept exploration" title="What if there were two oxygenators?" lead="A separate, concept-only figure explores packaging two cartridges on parallel branches — and every question that raises.">
+        <ParallelTeaser />
+      </Section>
+      <Section id="limits" eyebrow="09 · Limits" title="Concept packaging — not a clinical device.">
         <Limits />
       </Section>
-      <Section id="sources" eyebrow="09 · Sources" title="Sources">
+      <Section id="sources" eyebrow="10 · Sources" title="Sources">
         <Sources />
       </Section>
     </TrolleyProvider>

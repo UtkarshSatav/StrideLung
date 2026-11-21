@@ -11,5 +11,5 @@
     "skipLibCheck": true,
     "verbatimModuleSyntax": true
   },
-  "include": ["./**/*.ts", "../register.ts", "../../../scripts/*.ts"]
+  "include": ["./**/*.ts", "../register.ts", "../../lib/figure/*.ts", "../../../scripts/generate-figure.ts"]
 }

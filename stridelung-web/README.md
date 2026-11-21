@@ -3,6 +3,11 @@
 An interactive, isometric model of the **StrideLung 01** compact ECMO-support trolley concept, embedded in a mock
 product site. Every one of the 27 components in the register has its own geometry file and its own React component.
 
+A second figure, the **parallel-oxygenator concept exploration** (`/parallel-oxygenator`), draws the question from
+`STRIDELUNG_06_PARALLEL_OXYGENATOR_ANATOMY_CONCEPT.md`: two cartridge mock-ups on parallel conceptual branches between a
+shared inlet and a shared outlet. It is concept only — not a validated ECMO circuit, not for patient use — and it shows
+the open questions rather than answering them (see [Parallel-oxygenator figure](#parallel-oxygenator-figure)).
+
 > Concept packaging — not a clinical device. Every dimension, coordinate and mass is **P** (proposed); materials
 > marked **U** are unselected; **R** marks a fact about an identified reference product. Source of truth:
 > `STRIDELUNG_01_3D_MODELLING_AND_COMPONENT_SPEC.md` (Concept v0.1).
@@ -15,7 +20,8 @@ npm run dev          # http://localhost:3000
 npm run build && npm start
 ```
 
-The figure data in `src/trolley/generated/` is committed, so the site builds without regenerating it.
+The figure data in `src/trolley/generated/` and `src/parallel/generated/` is committed, so the site builds without
+regenerating it.
 
 ## What's where
 
@@ -25,6 +31,7 @@ src/
     page.tsx                     home: hero, explorer, subsystems, plan, mass budget, resources, evidence, register, limits, sources
     components/page.tsx          all 27 components, each drawn on its own (filterable)
     components/[slug]/page.tsx   one statically generated page per component
+    parallel-oxygenator/page.tsx the parallel-oxygenator concept exploration (figure, review table, topology, limits)
   trolley/
     register.ts                  the component register — single source of truth for every row's data
     geometry/                    generator-only code (never shipped to the browser)
@@ -41,9 +48,18 @@ src/
     TrolleyPart.tsx              server: one component drawn alone, cropped to its bounds
     Explorer.tsx, Controls.tsx, InfoPanel.tsx, PartList.tsx, Chip.tsx
     trolley.css                  figure styles and tokens (flow colours, subsystem hues)
+  parallel/                      the parallel-oxygenator concept figure
+    model.ts                     scenes, captions, parts, review sequences — visual-only, no circuit values
+    geometry/                    generator-only: builder.ts (camera), layout.ts, parts/*.ts, scene/, baseline.ts
+    generated/                   figure.json (depth-sorted items, door art) + baseline.json (the thumbnail)
+    engine.ts                    framework-free engine: door, scene layers, review steps, pause, tour, selection
+    ParallelProvider.tsx, ParallelFigure.tsx, ParallelStage.tsx, SceneControls.tsx, ScenePanel.tsx, KeyPanel.tsx,
+    PartsList.tsx, ParallelExplorer.tsx, parallel.css
   site/                          site sections (Header, Hero, Subsystems, MassBudget, RegisterTable, …)
   lib/iso/                       the isometric drawing kit (iso-kit, lathe, tube, audit, iso.css)
-scripts/generate-figure.ts       runs every part file, settles painter's order, writes src/trolley/generated
+  lib/figure/builder.ts          createBuilder(): camera, recorder and every drawing helper, one instance per figure
+scripts/generate-figure.ts       runs every trolley part file, settles painter's order, writes src/trolley/generated
+scripts/generate-parallel.ts     the same for the parallel-oxygenator figure and its baseline thumbnail
 ```
 
 ## Using the components
@@ -104,3 +120,34 @@ Building every envelope at its register coordinates surfaced a packaging conflic
   partition post was moved to y 80…100 to keep the handle zone clear.
 - **Line lengths.** Modelled routes are shorter than the allocations (C16 hoses ≈ 0.32 m of 1.6 m; C23 lines ≈ 0.96 and
   0.93 m of 1.5 m each). The allocations remain the mass basis; the model does not change them.
+
+## Parallel-oxygenator figure
+
+`/parallel-oxygenator` (also linked from the home page and the header). One shared model drives seven scenes, with
+the same part identities in all of them:
+
+| Key | Scene | What it shows |
+| --- | --- | --- |
+| 1 | Closed product | The trolley closed; both cartridges visible through the door's inspection window |
+| 2 | Concept cutaway | Door open, right side panel phantom; shared inlet → split → two branches → merge → shared outlet |
+| 3 / 4 | Branch A / B focus | One branch lit, the other ghosted, with the uncertainty card — a visual selection, not an operating state |
+| 5 | Topology review | Split, extra joins, merge — highlighted in turn (a presentation highlight, not a flow or switching sequence) |
+| 6 | Risk review | Unequal distribution, additional connections, packaging growth, changeover validation |
+| 7 | Compare with baseline | A single-cartridge thumbnail beside the two-cartridge cutaway, both labelled unvalidated |
+
+Keys: 1–7 scenes · arrows step through parts · N / P step a review · Space pauses motion · Esc clears. Deep links:
+`/parallel-oxygenator?scene=branch-a&part=split`. Reduced motion: the door jumps, highlights stand still and review steps
+advance only when asked. The isolation silhouettes are deliberately not selectable.
+
+What the drawing encodes, and what it refuses to: `src/parallel/model.ts` is visual-only. It holds no flow rates,
+pressures, valve states, timers, alarms, oxygen transfer or changeover behaviour, and the figure shows no numbers. Gas and
+thermal interfaces end in capped stubs tagged "not designed" / "unresolved"; the manifolds carry a hatched face
+(schematic, geometry unresolved); the case carries a joint rib and a hatched lid panel marking a provisional extension.
+The single-cartridge concept's dimensions and mass are not reused.
+
+Regenerate after editing `src/parallel/geometry/**`:
+
+```bash
+npm run parallel         # build + depth settle (~10 s), writes src/parallel/generated
+npm run parallel:audit   # the same, then the geometry audit
+```

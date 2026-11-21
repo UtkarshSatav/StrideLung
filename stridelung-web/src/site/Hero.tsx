@@ -23,6 +23,7 @@ export function Hero() {
           <div className="hero-cta">
             <Link className="btn primary" href="#explore">Explore the trolley</Link>
             <Link className="btn" href="/components">Browse the 27 components</Link>
+            <Link className="btn" href="/parallel-oxygenator">Parallel-oxygenator concept</Link>
           </div>
         </div>
         <dl className="stats">

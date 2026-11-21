@@ -9,7 +9,9 @@
     "start": "next start",
     "figure": "node scripts/generate-figure.ts",
     "figure:fast": "node scripts/generate-figure.ts --fast",
-    "figure:audit": "node --max-old-space-size=8192 scripts/generate-figure.ts --audit"
+    "figure:audit": "node --max-old-space-size=8192 scripts/generate-figure.ts --audit",
+    "parallel": "node scripts/generate-parallel.ts",
+    "parallel:audit": "node --max-old-space-size=8192 scripts/generate-parallel.ts --audit"
   },
   "dependencies": {
     "next": "16.4.6",
