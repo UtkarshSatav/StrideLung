@@ -12,6 +12,7 @@ const LINKS = [
   ["/#register", "Register"],
   ["/components", "Components"],
   ["/parallel-oxygenator", "Parallel concept"],
+  ["/simulator", "ECMO Simulator"],
 ];
 
 export function Header() {

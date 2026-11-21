@@ -92,6 +92,13 @@ export function Footer() {
                 <polyline points="7 7 17 7 17 17" />
               </svg>
             </Link>
+            <Link href="/simulator" className="designer-btn ghost">
+              <span>ECMO Simulator</span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="7" y1="17" x2="17" y2="7" />
+                <polyline points="7 7 17 7 17 17" />
+              </svg>
+            </Link>
             <Link href="/components" className="designer-btn ghost">
               <span>27 Components BOM</span>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
@@ -185,6 +192,7 @@ export function Footer() {
               <li><Link href="/#register">Hardware BOM Register</Link></li>
               <li><Link href="/components">All 27 Component Specs</Link></li>
               <li><Link href="/parallel-oxygenator">Dual-Cartridge Parallel Concept</Link></li>
+              <li><Link href="/simulator">ECMO Clinical Simulator</Link></li>
             </ul>
           </div>
 

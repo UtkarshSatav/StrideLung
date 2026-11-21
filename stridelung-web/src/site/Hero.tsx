@@ -41,6 +41,9 @@ export function Hero() {
           <Link className="btn primary hero-btn" href="/#explore">
             Explore the trolley →
           </Link>
+          <Link className="btn ghost-white hero-btn" href="/simulator">
+            ECMO Simulator
+          </Link>
           <Link className="btn ghost-white hero-btn" href="/components">
             Browse components
           </Link>
