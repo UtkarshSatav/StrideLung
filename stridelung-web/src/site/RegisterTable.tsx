@@ -1,5 +1,4 @@
 "use client";
-// The full register, sortable and filterable; a row opens the explorer on that component.
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { REGISTER, SUBSYSTEMS, type SubsystemId } from "@/trolley/register";
@@ -13,52 +12,147 @@ export function RegisterTable() {
   const [sort, setSort] = useState<{ key: Key; dir: 1 | -1 }>({ key: "id", dir: 1 });
   const [sys, setSys] = useState<SubsystemId | "all">("all");
   const [q, setQ] = useState("");
+
   const rows = useMemo(() => {
     const term = q.trim().toLowerCase();
-    return REGISTER.filter((r) => (sys === "all" || r.sys === sys) && (!term || `${r.id} ${r.name} ${r.material}`.toLowerCase().includes(term))).sort((a, b) => {
+    return REGISTER.filter(
+      (r) => (sys === "all" || r.sys === sys) && (!term || `${r.id} ${r.name} ${r.material} ${r.role}`.toLowerCase().includes(term))
+    ).sort((a, b) => {
       const va = a[sort.key], vb = b[sort.key];
       return (typeof va === "number" && typeof vb === "number" ? va - vb : String(va).localeCompare(String(vb))) * sort.dir;
     });
   }, [sort, sys, q]);
+
   const th = (key: Key, label: string) => (
     <th scope="col" aria-sort={sort.key === key ? (sort.dir === 1 ? "ascending" : "descending") : "none"}>
-      <button type="button" onClick={() => setSort({ key, dir: sort.key === key ? ((-sort.dir) as 1 | -1) : 1 })}>
-        {label}<span aria-hidden="true">{sort.key === key ? (sort.dir === 1 ? " ↑" : " ↓") : ""}</span>
+      <button
+        type="button"
+        className="th-sort-btn"
+        onClick={() => setSort({ key, dir: sort.key === key ? ((-sort.dir) as 1 | -1) : 1 })}
+      >
+        <span>{label}</span>
+        <span className="sort-indicator" aria-hidden="true">
+          {sort.key === key ? (sort.dir === 1 ? " ▲" : " ▼") : " ⇅"}
+        </span>
       </button>
     </th>
   );
-  const total = rows.reduce((a, r) => a + r.mass, 0);
+
+  const totalMass = rows.reduce((a, r) => a + r.mass, 0);
+
   return (
-    <div className="register">
-      <div className="filters" role="group" aria-label="Filter the register">
-        <input className="search" type="search" placeholder="Search components or materials" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search" />
-        {(["all", ...Object.keys(SUBSYSTEMS)] as (SubsystemId | "all")[]).map((id) => (
-          <button key={id} type="button" className="sl-btn" aria-pressed={sys === id} onClick={() => setSys(id)}>
-            {id !== "all" && <i className="sys-dot" data-sys={id} aria-hidden="true" />}
-            {id === "all" ? "All" : SUBSYSTEMS[id]}
-          </button>
-        ))}
+    <div className="register-database">
+      {/* Command Filter Bar */}
+      <div className="database-controls">
+        <div className="search-box">
+          <svg className="search-glyph" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.3-4.3" />
+          </svg>
+          <input
+            className="search-input"
+            type="search"
+            placeholder="Search 27 components by name, material, or function..."
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            aria-label="Filter database"
+          />
+          {q && (
+            <button type="button" className="clear-search-btn" onClick={() => setQ("")}>
+              ✕
+            </button>
+          )}
+        </div>
+
+        <div className="category-tabs" role="tablist" aria-label="Filter by layer">
+          {(["all", ...Object.keys(SUBSYSTEMS)] as (SubsystemId | "all")[]).map((id) => {
+            const count = id === "all" ? REGISTER.length : REGISTER.filter((r) => r.sys === id).length;
+            const isSelected = sys === id;
+            return (
+              <button
+                key={id}
+                type="button"
+                role="tab"
+                aria-selected={isSelected}
+                className={`category-tab${isSelected ? " active" : ""}`}
+                onClick={() => setSys(id)}
+              >
+                {id !== "all" && <i className="sys-dot" data-sys={id} aria-hidden="true" />}
+                <span>{id === "all" ? "All Components" : SUBSYSTEMS[id]}</span>
+                <span className="count-pill mono">{count}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
-      <div className="table-wrap">
-        <table className="table">
+
+      {/* Main Database Table */}
+      <div className="database-table-wrapper">
+        <table className="db-table">
           <thead>
-            <tr>{th("id", "ID")}{th("name", "Component")}<th scope="col">CAD envelope (mm)</th>{th("mass", "Mass (kg)")}<th scope="col">Material</th>{th("sys", "Layer")}<th scope="col"><span className="sr">Actions</span></th></tr>
+            <tr>
+              {th("id", "ID")}
+              {th("name", "Component & Function")}
+              <th scope="col">CAD Envelope (mm)</th>
+              {th("mass", "Mass (kg)")}
+              <th scope="col">Material Specification</th>
+              {th("sys", "Pathway")}
+              <th scope="col" className="text-right">Action</th>
+            </tr>
           </thead>
           <tbody>
             {rows.map((r) => (
-              <tr key={r.id}>
-                <td className="mono">{r.id}</td>
-                <td><Link href={`/components/${r.slug}`}>{r.name}</Link><div className="cell-sub">{r.shape}</div></td>
-                <td className="mono small">{r.envelope} <Chip status="P" /></td>
-                <td className="mono num">{r.mass.toFixed(2)}{r.massNote && <span className="cell-sub">row total</span>}</td>
-                <td className="small">{r.material.split(";")[0]} <Chip status={r.matStatus} /></td>
-                <td><span className="sys-tag"><i className="sys-dot" data-sys={r.sys} aria-hidden="true" />{SUBSYSTEMS[r.sys]}</span></td>
-                <td><button type="button" className="row-action" onClick={() => actions.focus((a) => { a.setView("open"); a.pick(r.id); })}>Show in model</button></td>
+              <tr key={r.id} className="db-row">
+                <td className="cell-id">
+                  <span className="id-badge mono">{r.id}</span>
+                </td>
+                <td className="cell-main">
+                  <Link href={`/components/${r.slug}`} className="component-link">
+                    {r.name}
+                  </Link>
+                  <p className="component-role-snippet">{r.role}</p>
+                </td>
+                <td className="cell-envelope mono small">
+                  <span>{r.envelope}</span>
+                  <Chip status="P" />
+                </td>
+                <td className="cell-mass mono">
+                  <span className="mass-number">{r.mass.toFixed(2)}</span>
+                  {r.massNote && <span className="mass-sub">({r.massNote})</span>}
+                </td>
+                <td className="cell-material small">
+                  <span>{r.material.split(";")[0]}</span>
+                  <Chip status={r.matStatus} />
+                </td>
+                <td className="cell-pathway">
+                  <span className="pathway-badge" data-sys={r.sys}>
+                    <i className="sys-dot" data-sys={r.sys} aria-hidden="true" />
+                    <span>{SUBSYSTEMS[r.sys].split(" ")[0]}</span>
+                  </span>
+                </td>
+                <td className="cell-actions text-right">
+                  <button
+                    type="button"
+                    className="inspect-model-btn"
+                    onClick={() => actions.focus((a) => { a.setView("open"); a.pick(r.id); })}
+                  >
+                    View in 3D ↗
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
           <tfoot>
-            <tr><td /><td>{rows.length} of {REGISTER.length} rows</td><td /><td className="mono num">{total.toFixed(2)}</td><td colSpan={3} className="muted small">+ 20% contingency on the full register = 26.78 kg</td></tr>
+            <tr className="db-summary-row">
+              <td colSpan={2} className="summary-left">
+                Showing <b>{rows.length}</b> of 27 registered parts
+              </td>
+              <td className="text-right mono small">Filtered Total:</td>
+              <td className="cell-mass mono bold">{totalMass.toFixed(2)} kg</td>
+              <td colSpan={3} className="summary-right small muted">
+                Full 27-part baseline = 22.31 kg (+20% contingency = 26.78 kg)
+              </td>
+            </tr>
           </tfoot>
         </table>
       </div>

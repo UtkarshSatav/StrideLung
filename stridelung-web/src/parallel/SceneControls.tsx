@@ -10,20 +10,20 @@ export function SceneControls() {
       <span className="pl-kicker">Scene</span>
       <div className="pl-scenes" role="group" aria-label="Choose a scene">
         {SCENES.map((s) => (
-          <button key={s.id} type="button" className="sl-btn" aria-pressed={state.scene === s.id} onClick={() => actions.setScene(s.id)}>
+          <button key={s.id} type="button" className="pl-btn" aria-pressed={state.scene === s.id} onClick={() => actions.setScene(s.id)}>
             <kbd aria-hidden="true">{s.key}</kbd>
             {s.label}
           </button>
         ))}
       </div>
       <div className="pl-row">
-        <button type="button" className="sl-btn" aria-pressed={state.motionPaused} onClick={() => actions.setPaused(!state.motionPaused)}>
+        <button type="button" className="pl-btn" aria-pressed={state.motionPaused} onClick={() => actions.setPaused(!state.motionPaused)}>
           {state.motionPaused ? "Resume motion" : "Pause motion"}
         </button>
-        <button type="button" className="sl-btn" aria-pressed={state.touring} disabled={state.reduced} onClick={() => (state.touring ? actions.stopTour() : actions.startTour())}>
+        <button type="button" className="pl-btn" aria-pressed={state.touring} disabled={state.reduced} onClick={() => (state.touring ? actions.stopTour() : actions.startTour())}>
           {state.touring ? "Stop tour" : "Play tour"}
         </button>
-        {state.selectedPartId && <button type="button" className="sl-btn" onClick={() => actions.pick(null)}>Clear selection</button>}
+        {state.selectedPartId && <button type="button" className="pl-btn" onClick={() => actions.pick(null)}>Clear selection</button>}
       </div>
       {state.reduced && <p className="pl-note">Reduced motion is on: the door jumps, highlights stand still, and review steps advance only when you step them.</p>}
     </section>

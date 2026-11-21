@@ -16,10 +16,16 @@ export function Plan() {
       {PLAN.map(([decision, why, evidence], i) => (
         <li key={i} className="plan-step">
           <span className="plan-num">{String(i + 1).padStart(2, "0")}</span>
-          <div>
+          <div className="plan-body">
             <h3>{decision}</h3>
-            <p><span className="k">Why it helps</span>{why}</p>
-            <p><span className="k">Evidence needed first</span>{evidence}</p>
+            <p>
+              <span className="k">Why it helps</span>
+              {why}
+            </p>
+            <p>
+              <span className="k">Evidence needed first</span>
+              {evidence}
+            </p>
           </div>
         </li>
       ))}

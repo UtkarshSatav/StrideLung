@@ -25,31 +25,80 @@ export default function Home() {
       >
         <Explorer />
       </Section>
-      <Section id="subsystems" eyebrow="02 · Subsystems" title="Five layers, one case." lead="Each layer can be isolated in the model with its flow running. Pick a component to jump straight to it.">
+      <Section
+        id="subsystems"
+        eyebrow="02 · Subsystems"
+        title="Five clinical layers, one integrated chassis."
+        lead="Each subsystem operates on a dedicated hydraulic, pneumatic, or electrical pathway. Select any layer to isolate its circuitry and activate animated telemetry in the 3D model."
+        className="section-subsystems"
+      >
         <Subsystems />
       </Section>
-      <Section id="plan" eyebrow="03 · Packaging plan" title="How it gets compact — and what has to be proven first." lead="Eight packaging decisions from the brief, each paired with the evidence required before any hardware claim.">
+      <Section
+        id="plan"
+        eyebrow="03 · Packaging plan"
+        title="How it gets compact — and what has to be proven first."
+        lead="Eight packaging decisions from the brief, each paired with the evidence required before any hardware claim."
+      >
         <Plan />
       </Section>
-      <Section id="budget" eyebrow="04 · Mass budget" title="26.78 kg, counted once." lead="Every row is an allocation. The integral valve, the battery case and BMS, and the illustrative fluid are already inside their rows; nothing is added twice. The patient, ventilator, monitor and unlisted consumables are excluded.">
+      <Section
+        id="budget"
+        eyebrow="04 · Mass budget"
+        title="26.78 kg, counted once."
+        lead="Every row is an allocation. The integral valve, the battery case and BMS, and the illustrative fluid are already inside their rows; nothing is added twice. The patient, ventilator, monitor and unlisted consumables are excluded."
+        className="section-budget"
+      >
         <MassBudget />
       </Section>
-      <Section id="resources" eyebrow="05 · Resources" title="Illustrative arithmetic, not a runtime." lead="Two worked sums from the brief. Their only job is to show what the numbers depend on.">
+      <Section
+        id="resources"
+        eyebrow="05 · Resources"
+        title="Illustrative arithmetic, not a runtime."
+        lead="Two worked sums from the brief. Their only job is to show what the numbers depend on."
+      >
         <Resources />
       </Section>
-      <Section id="evidence" eyebrow="06 · Evidence" title="What the references support — and what they don’t." lead="Existing products are reality checks, not interchangeable parts of a qualified new assembly.">
+      <Section
+        id="evidence"
+        eyebrow="06 · Evidence"
+        title="What the references support — and what they don’t."
+        lead="Existing products are reality checks, not interchangeable parts of a qualified new assembly."
+        className="section-evidence"
+      >
         <Evidence />
       </Section>
-      <Section id="register" eyebrow="07 · Component register" title="All 27 components." lead="Sort, filter or search the register. Each row opens its own page, or shows the component in the model.">
+      <Section
+        id="register"
+        eyebrow="07 · Component register"
+        title="All 27 components."
+        lead="Sort, filter or search the register. Each row opens its own page, or shows the component in the model."
+        className="section-register"
+      >
         <RegisterTable />
       </Section>
-      <Section id="parallel" eyebrow="08 · Concept exploration" title="What if there were two oxygenators?" lead="A separate, concept-only figure explores packaging two cartridges on parallel branches — and every question that raises.">
+      <Section
+        id="parallel"
+        eyebrow="08 · Concept exploration"
+        title="What if there were two oxygenators?"
+        lead="A separate, concept-only figure explores packaging two cartridges on parallel branches — and every question that raises."
+        className="section-parallel"
+      >
         <ParallelTeaser />
       </Section>
-      <Section id="limits" eyebrow="09 · Limits" title="Concept packaging — not a clinical device.">
+      <Section
+        id="limits"
+        eyebrow="09 · Limits"
+        title="Concept packaging — not a clinical device."
+        className="section-limits"
+      >
         <Limits />
       </Section>
-      <Section id="sources" eyebrow="10 · Sources" title="Sources">
+      <Section
+        id="sources"
+        eyebrow="10 · Sources"
+        title="Sources"
+      >
         <Sources />
       </Section>
     </TrolleyProvider>

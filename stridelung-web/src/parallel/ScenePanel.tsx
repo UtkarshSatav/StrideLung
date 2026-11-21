@@ -33,8 +33,8 @@ export function ScenePanel() {
               ))}
             </ol>
             <div className="pl-row">
-              <button type="button" className="sl-btn" onClick={() => actions.stepBy(-1)}>← Previous</button>
-              <button type="button" className="sl-btn" onClick={() => actions.stepBy(1)}>Next →</button>
+              <button type="button" className="pl-btn" onClick={() => actions.stepBy(-1)}>← Previous</button>
+              <button type="button" className="pl-btn" onClick={() => actions.stepBy(1)}>Next →</button>
             </div>
             <p className="pl-note">A presentation highlight, not a flow or switching sequence.</p>
           </>

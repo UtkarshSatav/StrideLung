@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Section } from "@/site/Section";
 import { ParallelExplorer } from "@/parallel/ParallelExplorer";
+import { ParallelTopologyConsole } from "@/parallel/ParallelTopologyConsole";
 import { BANNER, CHECKLIST, NOT_CLAIMED, PLACEMENT, QUESTION, REVIEW, TITLE } from "@/parallel/model";
 
 export const metadata: Metadata = {
@@ -24,15 +25,23 @@ Shared conceptual outlet`;
 export default function ParallelPage() {
   return (
     <>
-      <section className="section page-top">
-        <div className="wrap">
-          <header className="section-head">
+      <section className="section page-top parallel-hero-section">
+        <div className="wrap parallel-hero-grid">
+          <header className="parallel-hero-copy">
             <span className="eyebrow">Concept exploration · 06</span>
-            <h1>{TITLE}</h1>
-            <p className="lead">“{QUESTION}”</p>
-            <p className="lead">This page shows the question and its unresolved engineering problems. It does not answer “yes”, and it does not show an automatic changeover as a capability.</p>
-            <p className="pl-note" role="note" style={{ maxWidth: 780 }}><b>{BANNER}.</b> Concept visualisation only — not a circuit design, a valve design, a construction guide, or evidence that the arrangement can safely support a patient.</p>
+            <h1 className="parallel-hero-title">{TITLE}</h1>
+            <p className="parallel-hero-quote">“{QUESTION}”</p>
+            <p className="lead">
+              This exploration examines the architectural question and its unresolved engineering dilemmas. It does not answer “yes”, and it does not show an automatic changeover as a capability.
+            </p>
+            <div className="pl-note" role="note" style={{ maxWidth: 780 }}>
+              <b>{BANNER}.</b> Concept visualisation only — not a circuit design, a valve design, a construction guide, or evidence that the arrangement can safely support a patient.
+            </div>
           </header>
+
+          <div className="parallel-hero-interactive">
+            <ParallelTopologyConsole />
+          </div>
         </div>
       </section>
       <Section id="figure" eyebrow="01 · Interactive cutaway" title="Two cartridges, one carrier, every join visible." lead="Seven scenes over one model, with the same part identities throughout. Pick a scene, step through a review, or hover any part to read what it is — and what it is not." className="explore">

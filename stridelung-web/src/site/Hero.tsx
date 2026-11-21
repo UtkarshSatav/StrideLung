@@ -1,39 +1,53 @@
+"use client";
+
 import Link from "next/link";
-import { MASS, REGISTER } from "@/trolley/register";
 
 export function Hero() {
-  const stats = [
-    { label: "Stowed rolling envelope", value: "460 × 330 × 790", unit: "mm" },
-    { label: "Planning mass incl. 20% contingency", value: MASS.total.toFixed(2), unit: "kg" },
-    { label: "Under the 28 kg ceiling", value: MASS.margin.toFixed(2), unit: "kg" },
-    { label: "Components in the register", value: String(REGISTER.length), unit: "" },
-    { label: "Subsystem layers", value: "5", unit: "" },
-  ];
   return (
     <section className="hero">
-      <div className="wrap hero-grid">
-        <div className="hero-copy">
-          <span className="badge"><i aria-hidden="true" />Concept v0.1 · not a clinical device</span>
-          <h1>ECMO support, packed to walk beside the patient.</h1>
-          <p className="hero-lead">
-            StrideLung 01 is a packaging study: one rigid, trolley-shaped case that consolidates gas exchange, blood pumping, power,
-            heat management and monitoring for supervised hospital mobility. Open it, take it apart and trace every flow —
-            each of its 27 components is drawn from the register, and every number says whether it is proposed, referenced or unverified.
-          </p>
-          <div className="hero-cta">
-            <Link className="btn primary" href="#explore">Explore the trolley</Link>
-            <Link className="btn" href="/components">Browse the 27 components</Link>
-            <Link className="btn" href="/parallel-oxygenator">Parallel-oxygenator concept</Link>
-          </div>
+      {/* Layer 1: 16-bit retro pixel art animated GIF */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/hero-pixel.gif"
+        alt="16-bit retro pixel art of patient walking with StrideLung ambulatory ECMO trolley"
+        className="hero-pixel-bg"
+      />
+
+      {/* Layer 2: Cinematic vignette overlay for contrast and clarity */}
+      <div className="hero-overlay" aria-hidden="true" />
+
+      {/* Layer 3: CRT Scanlines texture */}
+      <div className="hero-scanline" aria-hidden="true" />
+
+      {/* Layer 4: Perfectly aligned, optically centered hero content */}
+      <div className="wrap hero-content">
+        <div className="hero-badge">
+          <i className="badge-dot" aria-hidden="true" />
+          <span>StrideLung · Ambulatory ECMO Concept</span>
         </div>
-        <dl className="stats">
-          {stats.map((s) => (
-            <div className="stat" key={s.label}>
-              <dt>{s.label}</dt>
-              <dd><span className="stat-value">{s.value}</span>{s.unit && <span className="stat-unit">{s.unit}</span>}</dd>
-            </div>
-          ))}
-        </dl>
+
+        <h1 className="hero-h1">
+          <span>Your lungs are in</span>
+          <span className="hero-h1-accent">good hands.</span>
+        </h1>
+
+        <p className="hero-lead">
+          A compact, mobile respiratory trolley engineered to walk with patients.
+          <span className="hero-lead-sep"> </span>
+          Explore every component, circuit, and flow.
+        </p>
+
+        <div className="hero-cta">
+          <Link className="btn primary hero-btn" href="/#explore">
+            Explore the trolley →
+          </Link>
+          <Link className="btn ghost-white hero-btn" href="/components">
+            Browse components
+          </Link>
+          <Link className="btn ghost-white hero-btn" href="/parallel-oxygenator">
+            Parallel concept
+          </Link>
+        </div>
       </div>
     </section>
   );

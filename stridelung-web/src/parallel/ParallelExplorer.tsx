@@ -12,15 +12,15 @@ export function ParallelExplorer() {
       <div className="pl-explorer">
         <div className="pl-explorer-main">
           <ParallelFigure />
+          <div className="pl-explorer-list">
+            <PartsList />
+          </div>
         </div>
         <aside className="pl-side" aria-label="Scenes, captions and the selected part">
           <SceneControls />
           <ScenePanel />
           <KeyPanel />
         </aside>
-        <div className="pl-explorer-list">
-          <PartsList />
-        </div>
       </div>
     </ParallelProvider>
   );
