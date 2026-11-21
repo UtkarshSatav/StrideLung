@@ -47,9 +47,19 @@ export type Engine = {
   reset(): void;
   stopTour(): void;
   setAutoTour(on: boolean): void;
+  /** highlight a component without the x-ray (console: the part behind the active alarm) */
+  mark(id: string | null): void;
+  /** flash the C21 alarm light independently of the blocked-line demo */
+  setAlarm(on: boolean): void;
+  /** live 0..1 values for the machine's own screen (C20); null returns to the synthetic demo traces */
+  setTelemetry(t: Telemetry | null): void;
+  /** grey the figure and freeze the screen traces when no data is arriving */
+  setStale(on: boolean): void;
   destroy(): void;
   getState(): EngineState;
 };
+
+export type Telemetry = { flow: number; pin: number; pout: number; warn: boolean };
 
 const FLOW_OF: Record<FlowId, string[]> = { blood: ["drain", "return"], gas: ["gas", "gasout", "ext"], water: ["water"], electrical: ["power", "data"] };
 const OPEN_DEG = 108;
@@ -116,6 +126,9 @@ export function createEngine(root: HTMLElement, scene: EngineScene, opts: { onSt
   let tourClock = 0, tourStep = -1, idleTimer = 0 as unknown as ReturnType<typeof setTimeout>;
   let autoTour = opts.autoTour !== false;
   let lastEmit = "";
+  let telemetry: Telemetry | null = null;
+  let stale = false;
+  let marked: string | null = null;
 
   const emit = () => {
     state.status = stateWord();
@@ -254,7 +267,7 @@ export function createEngine(root: HTMLElement, scene: EngineScene, opts: { onSt
     if (!traces.flow.length) for (let i = 0; i < 60; i++) for (const id of Object.keys(traces)) traces[id].push(synthetic(-(60 - i) * 0.12)[id]);
     while (traceClock > 0.12) {
       traceClock -= 0.12;
-      const s = synthetic(clock);
+      const s = (telemetry as Record<string, number> | null) ?? synthetic(clock);
       for (const id of Object.keys(traces)) {
         const prev = traces[id][traces[id].length - 1];
         traces[id].push(prev + (s[id] - prev) * 0.25);
@@ -266,7 +279,7 @@ export function createEngine(root: HTMLElement, scene: EngineScene, opts: { onSt
   function drawScreen() {
     if (!screen) return;
     const sel = state.selected || state.hovered;
-    tab = sel ? "part" : state.flows.length || state.blocked ? "signals" : "overview";
+    tab = sel ? "part" : telemetry || state.flows.length || state.blocked ? "signals" : "overview";
     let s = "";
     [["overview", "SYSTEM"], ["part", "COMPONENT"], ["signals", "SIGNALS"]].forEach(([id, label], i) => {
       const x = 9 + i * 58;
@@ -283,9 +296,10 @@ export function createEngine(root: HTMLElement, scene: EngineScene, opts: { onSt
       [["flow", "FLOW"], ["pin", "P DRAINAGE"], ["pout", "P POST-OXY"]].forEach(([id, label], i) => {
         const y0 = 25 + i * 17;
         const pts = traces[id].map((v, j) => `${j ? "L" : "M"}${(56 + j * 2).toFixed(1)} ${(y0 + 14 - v * 13).toFixed(1)}`).join("");
-        s += `<text class="sl-scr" x="11" y="${y0 + 9}" font-size="4.8">${label}</text><path class="sl-trace${state.blocked && id !== "pout" ? " warn" : ""}" d="${pts}"/>`;
+        const warn = telemetry ? telemetry.warn : state.blocked && id !== "pout";
+        s += `<text class="sl-scr" x="11" y="${y0 + 9}" font-size="4.8">${label}</text><path class="sl-trace${warn ? " warn" : ""}" d="${pts}"/>`;
       });
-      s += `<text class="sl-scr dim" x="11" y="79" font-size="4.4">SYNTHETIC · ILLUSTRATIVE · ${state.blocked ? "BLOCKED-LINE DEMO" : "NORMAL-FLOW DEMO"}</text>`;
+      s += `<text class="sl-scr dim" x="11" y="79" font-size="4.4">${telemetry ? (stale ? "MIRRORED · NO DATA · SIMULATED DEVICE" : "MIRRORED · SIMULATED DEVICE") : `SYNTHETIC · ILLUSTRATIVE · ${state.blocked ? "BLOCKED-LINE DEMO" : "NORMAL-FLOW DEMO"}`}</text>`;
     } else {
       s += `<text class="sl-scr hi" x="11" y="34" font-size="6.2">VV CONFIGURATION · CONCEPT v0.1</text>`;
       s += `<text class="sl-scr" x="11" y="46" font-size="5.2">GAS: ${state.gasExternal ? "EXTERNAL BLENDED SUPPLY" : "ONBOARD CYLINDER"}</text>`;
@@ -404,7 +418,7 @@ export function createEngine(root: HTMLElement, scene: EngineScene, opts: { onSt
       flowT += dt * (state.blocked ? 9 : 22);
       root.style.setProperty("--t", flowT.toFixed(1));
     }
-    if (state.flows.length || state.blocked) {
+    if (!stale && (telemetry || state.flows.length || state.blocked)) {
       sampleTraces(dt);
       if (tab === "signals") drawScreen();
     }
@@ -415,7 +429,7 @@ export function createEngine(root: HTMLElement, scene: EngineScene, opts: { onSt
     say();
     if (wasMoving !== moving) emit();
     wasMoving = moving;
-    const keep = moving || state.touring || (state.flows.length > 0 && !calm) || state.blocked;
+    const keep = moving || state.touring || (state.flows.length > 0 && !calm) || state.blocked || (!!telemetry && !stale);
     frame = visible && keep ? requestAnimationFrame(tick) : 0;
   }
   function run() {
@@ -459,7 +473,7 @@ export function createEngine(root: HTMLElement, scene: EngineScene, opts: { onSt
   function pick(id: string | null) {
     state.selected = id;
     state.hovered = null;
-    highlight(id);
+    highlight(id || marked);
     applyXray();
     drawScreen();
     say();
@@ -469,7 +483,7 @@ export function createEngine(root: HTMLElement, scene: EngineScene, opts: { onSt
   function hover(id: string | null) {
     if (state.hovered === id) return;
     state.hovered = id;
-    highlight(state.selected || id);
+    highlight(state.selected || id || marked);
     drawScreen();
     say();
     emit();
@@ -630,5 +644,23 @@ export function createEngine(root: HTMLElement, scene: EngineScene, opts: { onSt
       stage.removeEventListener("keydown", onKey);
     },
     getState: () => ({ ...state, flows: [...state.flows] }),
+    mark(id) {
+      marked = id;
+      if (!state.selected && !state.hovered) highlight(id);
+    },
+    setAlarm(on) {
+      root.toggleAttribute("data-alarm", on);
+    },
+    setTelemetry(t) {
+      telemetry = t;
+      drawScreen();
+      run();
+    },
+    setStale(on) {
+      stale = on;
+      root.toggleAttribute("data-stale", on);
+      drawScreen();
+      run();
+    },
   };
 }

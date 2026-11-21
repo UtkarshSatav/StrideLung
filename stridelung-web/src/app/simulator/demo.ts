@@ -1,97 +1,53 @@
-export const SCENARIOS = {
-  status: { label: "Normal status update", subsystem: "Console" },
-  link: { label: "Telemetry interrupted", subsystem: "Connection", priority: "High", team: "Hospital IT / Biomed" },
-  power: { label: "Battery reserve reported", subsystem: "Power", priority: "High", team: "Biomedical engineering" },
-  circuit: { label: "Circuit status flagged", subsystem: "Circuit", priority: "High", team: "ECMO response team" },
-  service: { label: "Service review requested", subsystem: "Service", priority: "Routine", team: "Biomedical engineering" },
-} as const;
+// Display helpers and the downloadable alert snapshot for the hospital dashboard demo.
+import { ALARMS, ESCALATION_TEAM, SUBSYSTEMS, type Incident, type Tier } from "./alerts";
+import { FLEET_ID } from "./fleet";
 
-export type Scenario = keyof typeof SCENARIOS;
-export type Fault = Exclude<Scenario, "status">;
-export type Device = {
-  id: string;
-  caseId: string | null;
-  location: string;
-  signal: Scenario;
-  updatedAt: number | null;
-};
-export type Incident = {
-  id: string;
-  deviceId: string;
-  caseId: string | null;
-  location: string;
-  kind: Fault;
-  createdAt: number;
-  acknowledgedAt?: number;
-  closedAt?: number;
-};
-export type Session = { devices: Device[]; incidents: Incident[]; nextId: number };
-
-export const INITIAL_SESSION: Session = {
-  devices: Array.from({ length: 10 }, (_, i) => ({
-    id: `SL-D-${String(i + 1).padStart(3, "0")}`,
-    caseId: i < 6 ? `DEMO-${104 + i}` : null,
-    location: i < 6 ? `ICU · Bay ${i + 1}` : "Equipment bay",
-    signal: "status",
-    updatedAt: null,
-  })),
-  incidents: [],
-  nextId: 1,
-};
-
-export function receiveUpdate(session: Session, deviceId: string, scenario: Scenario, now: number): Session {
-  const device = session.devices.find((unit) => unit.id === deviceId);
-  if (!device) return session;
-  const devices = session.devices.map((unit) =>
-    unit.id === deviceId ? { ...unit, signal: scenario, updatedAt: now } : unit,
-  );
-  if (scenario === "status" || session.incidents.some(
-    (event) => event.deviceId === deviceId && event.kind === scenario && !event.closedAt,
-  )) return { ...session, devices };
-
-  return {
-    devices,
-    nextId: session.nextId + 1,
-    incidents: [{
-      id: `EVT-${String(session.nextId).padStart(3, "0")}`,
-      deviceId,
-      caseId: device.caseId,
-      location: device.location,
-      kind: scenario,
-      createdAt: now,
-    }, ...session.incidents],
-  };
-}
+export const unitLabel = (id: string) => (id === FLEET_ID ? "All units" : id);
 
 export const displayTime = (time: number | null | undefined) =>
-  time == null ? "Demo baseline" : new Date(time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+  time == null ? "—" : new Date(time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+
+export const TIER_LABEL: Record<Tier, string> = { urgent: "Urgent", attention: "Attention", unavailable: "Monitor unavailable", routine: "Routine" };
 
 export const eventState = (event: Incident) =>
-  event.closedAt ? "Closed" : event.acknowledgedAt ? "Acknowledged" : "New";
+  event.closedAt ? "Closed" : event.acknowledgedAt ? "Acknowledged" : event.escalatedAt !== undefined ? "Escalated" : "New";
+
+export const deliveryLine = (event: Incident) =>
+  event.hospitalSide ? `Raised by the dashboard at ${displayTime(event.deliveredAt)}`
+    : event.late ? `Delivered late at ${displayTime(event.deliveredAt)} · queued on the trolley from ${displayTime(event.createdAt)}`
+    : `Delivered at ${displayTime(event.deliveredAt)}`;
+
+export const teamFor = (event: Incident) => SUBSYSTEMS[event.subsystem].team;
+export const escalationLine = (event: Incident) =>
+  event.escalatedAt === undefined ? null : `Not acknowledged in time — escalated to ${ESCALATION_TEAM} at ${displayTime(event.escalatedAt)} (demo escalation timer — set by hospital policy in a real system).`;
 
 function escapeXml(value: string) {
   return value.replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;" })[char] ?? char);
 }
 
+/** SVG snapshot of what the hospital received for this incident. */
 export function eventSnapshot(event: Incident) {
-  const report = SCENARIOS[event.kind];
-  const color = report.priority === "High" ? "#ff9869" : "#f8cf74";
-  const zones = ["Connection", "Power", "Circuit", "Service"];
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 280" width="560" height="280">
-    <rect width="560" height="280" rx="16" fill="#16212a"/>
+  const view = event.hospital ?? { tier: event.tier, signals: event.signals, backInBand: event.backInBand, syncedAt: event.createdAt };
+  const urgent = view.tier === "urgent";
+  const color = urgent ? "#ff9869" : view.tier === "routine" ? "#aab9c4" : "#f8cf74";
+  const rows = view.signals.slice(0, 4).map((s, i) => {
+    const def = ALARMS[s.alarm];
+    const y = 106 + i * 46;
+    const state = s.active ? `out of band since ${displayTime(s.since)}` : `back in band at ${displayTime(s.clearedAt)}`;
+    return `<rect x="26" y="${y}" width="508" height="38" rx="6" fill="#24323e" stroke="${s.active ? color : "#40515e"}"/>
+      <text x="38" y="${y + 16}" fill="#e0e7ed" font-size="13">${escapeXml(def.label)}</text>
+      <text x="522" y="${y + 16}" fill="${s.active ? color : "#aab9c4"}" font-size="12" text-anchor="end">${escapeXml(s.value)}</text>
+      <text x="38" y="${y + 31}" fill="#aab9c4" font-size="11">Demo limit ${escapeXml(def.band)} · ${escapeXml(state)}</text>`;
+  }).join("");
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 330" width="560" height="330">
+    <rect width="560" height="330" rx="16" fill="#16212a"/>
     <g font-family="system-ui, sans-serif">
-      <text x="26" y="33" fill="#aab9c4" font-size="13">STRIDELUNG · SIMULATED EVENT SNAPSHOT</text>
-      <text x="26" y="65" fill="#fff" font-size="22" font-weight="700">${escapeXml(report.label)}</text>
-      <text x="26" y="89" fill="#cbd5dc" font-size="13">${escapeXml(event.deviceId)} · ${escapeXml(event.caseId ?? "Unassigned")} · ${escapeXml(event.location)}</text>
-      ${zones.map((zone, i) => {
-        const x = 26 + i * 130;
-        const active = zone === report.subsystem;
-        return `<rect x="${x}" y="116" width="118" height="76" rx="9" fill="#24323e" stroke="${active ? color : "#40515e"}" stroke-width="${active ? 2 : 1}"/>
-          <text x="${x + 12}" y="144" fill="#e0e7ed" font-size="13">${zone}</text>
-          <text x="${x + 12}" y="171" fill="${active ? color : "#aab9c4"}" font-size="12">${active ? "Reported event" : "No event shown"}</text>`;
-      }).join("")}
-      <text x="26" y="226" fill="${color}" font-size="13" font-weight="700">${report.priority} priority · ${escapeXml(event.id)}</text>
-      <text x="26" y="251" fill="#aab9c4" font-size="12">${escapeXml(new Date(event.createdAt).toISOString())} · Synthetic device record</text>
+      <text x="26" y="33" fill="#aab9c4" font-size="13">STRIDELUNG · SIMULATED DEVICE · ALERT SNAPSHOT</text>
+      <text x="26" y="63" fill="#fff" font-size="21" font-weight="700">${escapeXml(SUBSYSTEMS[event.subsystem].label)} · ${escapeXml(TIER_LABEL[view.tier])}</text>
+      <text x="26" y="86" fill="#cbd5dc" font-size="13">${escapeXml(unitLabel(event.deviceId))} · ${escapeXml(event.caseId ?? "—")} · ${escapeXml(event.location)}</text>
+      ${rows}
+      <text x="26" y="292" fill="${color}" font-size="12" font-weight="700">${escapeXml(event.id)} · ${view.backInBand ? "Signals back in band — review still open" : "Signals out of band"}</text>
+      <text x="26" y="312" fill="#aab9c4" font-size="11">Demo limits, not clinical thresholds · Synthetic device record · ${escapeXml(new Date(event.deliveredAt ?? event.createdAt).toISOString())}</text>
     </g>
   </svg>`;
 }

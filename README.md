@@ -27,9 +27,9 @@ The pitch uses the website’s all-in-one trolley architecture. The proposed loa
 
 ## Hospital portal prototype
 
-Open **Hospital dashboard** from the website, then select **Command panel**. Pick a device, choose **Telemetry interrupted**, and send the simulated update. Open the alert to see its snapshot and assign the demo review. Use **Restore demo signal** to show a subsequent normal report. The dashboard also includes assignments, service records, and a commercial scenario calculator. The [standalone prototype](index.html) is the earlier browser demo.
+Open **Hospital dashboard** from the website, then select **Command panel**: the trolley's own display, mirrored to the hospital, with the same trolley model as the landing page. Use the **At the trolley (demo)** strip to trigger a scenario such as **Drainage line restriction**; the simulated trolley's own checks raise the alert automatically when a reading stays outside its demo limit. Open the alert to see what was received, its delivery state and snapshot, then acknowledge it. Turn the hospital network off to show the display going stale and the alert being delivered late. The dashboard also includes assignments, service records, and a commercial scenario calculator. The [standalone prototype](index.html) is the earlier browser demo.
 
-The portal is a front-end demonstration only. It has no device connection, clinical monitoring, real patient records, authentication, database, or external notifications. All interactions are local to the browser session. The 14-day consumable interval and commercial figures are unvalidated planning assumptions; service schedules must follow validated manufacturer instructions and hospital policy. Hospital procedure charges are not StrideLung company revenue.
+The portal is a front-end demonstration only. Demo limits are not clinical thresholds. It has no device connection, clinical monitoring, real patient records, authentication, database, or external notifications. All interactions are local to the browser session. The 14-day consumable interval and commercial figures are unvalidated planning assumptions; service schedules must follow validated manufacturer instructions and hospital policy. Hospital procedure charges are not StrideLung company revenue.
 
 ## Design and safety status
 

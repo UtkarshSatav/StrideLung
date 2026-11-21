@@ -1,21 +1,29 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { DeviceConsole } from "./DeviceConsole";
-import { BASELINE_SETTINGS, type ConsoleSettings } from "./consoleModel";
-import {
-  displayTime, eventSnapshot, eventState, INITIAL_SESSION, receiveUpdate, SCENARIOS,
-  type Device, type Incident, type Scenario,
-} from "./demo";
+import { useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
+import { CommandPanel } from "./CommandPanel";
+import { ALARMS, SUBSYSTEMS, tierRank, type Incident } from "./alerts";
+import { createFleet, FLEET_ID, SAMPLE_MS, type Unit } from "./fleet";
+import { deliveryLine, displayTime, escalationLine, eventSnapshot, eventState, teamFor, TIER_LABEL, unitLabel } from "./demo";
 
 const VIEWS = ["Fleet overview", "Command panel", "Alert inbox", "Assignments", "Service & circuits", "Commercial scenario"] as const;
 type View = typeof VIEWS[number];
-const CASE_POOL = INITIAL_SESSION.devices.flatMap((unit) => unit.caseId ? [unit.caseId] : []).concat(["DEMO-110", "DEMO-111", "DEMO-112", "DEMO-113"]);
+const CASE_POOL = Array.from({ length: 10 }, (_, i) => `DEMO-${104 + i}`);
 
-function Signal({ signal }: { signal: Scenario }) {
-  const tone = signal === "status" ? "good" : signal === "service" ? "routine" : "urgent";
-  return <span className={`ops-chip ${tone}`}>{signal === "status" ? "Reporting" : SCENARIOS[signal].label}</span>;
+/** what the hospital can see: delivered incidents, as last received */
+const visible = (e: Incident) => e.hospital !== null;
+const isNew = (e: Incident) => visible(e) && !e.acknowledgedAt && !e.closedAt;
+const tierOf = (e: Incident) => e.hospital?.tier ?? e.tier;
+
+function UnitStatus({ unit, incidents, connected }: { unit: Unit; incidents: Incident[]; connected: boolean }) {
+  if (!unit.caseId) return <span className="ops-chip">Not running</span>;
+  if (!connected) return <span className="ops-chip urgent">No data</span>;
+  const open = incidents.filter((e) => e.deviceId === unit.id && visible(e) && !e.closedAt && !e.hospital?.backInBand);
+  if (open.length === 0) return <span className="ops-chip good">Reporting · no active alert</span>;
+  const worst = open.reduce((a, b) => (tierRank(tierOf(b)) > tierRank(tierOf(a)) ? b : a));
+  const tone = tierOf(worst) === "urgent" || tierOf(worst) === "unavailable" ? "urgent" : "routine";
+  return <span className={`ops-chip ${tone}`}>{TIER_LABEL[tierOf(worst)]} · {SUBSYSTEMS[worst.subsystem].label}</span>;
 }
 
 function CommercialScenario() {
@@ -51,65 +59,53 @@ function CommercialScenario() {
   );
 }
 
-export default function HospitalDashboard() {
-  const [session, setSession] = useState(INITIAL_SESSION);
+export default function HospitalDashboard({ model }: { model: ReactNode }) {
+  const [fleet] = useState(() => createFleet(Date.now()));
+  const snapshot = useSyncExternalStore(fleet.subscribe, fleet.getSnapshot, fleet.getSnapshot);
   const [view, setView] = useState<View>("Fleet overview");
-  const [deviceId, setDeviceId] = useState(INITIAL_SESSION.devices[0].id);
-  const [consoleSettings, setConsoleSettings] = useState<Record<string, ConsoleSettings>>({});
+  const [deviceId, setDeviceId] = useState(snapshot.units[0].id);
   const [alertId, setAlertId] = useState<string | null>(null);
   const [message, setMessage] = useState("");
-  const device: Device = session.devices.find((unit) => unit.id === deviceId) ?? session.devices[0];
-  const openEvents = session.incidents.filter((event) => !event.closedAt);
-  const newEvents = openEvents.filter((event) => !event.acknowledgedAt);
-  const assigned = session.devices.filter((unit) => unit.caseId).length;
-  const incident = session.incidents.find((event) => event.id === alertId) ?? openEvents[0] ?? session.incidents[0];
-  const deviceEvents = session.incidents.filter((event) => event.deviceId === device.id);
+  // clock times differ between the prerendered page and the browser: show them only after hydration
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
 
-  function notifyUpdate(nextScenario: Scenario) {
-    const now = Date.now();
-    const next = receiveUpdate(session, device.id, nextScenario, now);
-    setSession(next);
-    if (nextScenario === "status") {
-      setMessage(`${device.id} reported normal demo status.`);
-      return;
-    }
-    const event = next.incidents.find((entry) => entry.deviceId === device.id && entry.kind === nextScenario && !entry.closedAt);
-    if (event) setAlertId(event.id);
-    setMessage(`${device.id} · ${SCENARIOS[nextScenario].label}. ${next.nextId === session.nextId ? "The corresponding alert is already open." : "New alert in the hospital inbox."}`);
-  }
+  useEffect(() => {
+    const timer = window.setInterval(() => fleet.step(Date.now()), SAMPLE_MS);
+    return () => window.clearInterval(timer);
+  }, [fleet]);
+
+  const { units } = snapshot;
+  const seen = snapshot.incidents.filter(visible);
+  const openEvents = seen.filter((e) => !e.closedAt);
+  const newEvents = seen.filter(isNew);
+  const running = units.filter((u) => u.caseId).length;
+  const incident = seen.find((e) => e.id === alertId) ?? openEvents[0] ?? seen[0];
+  const deviceEvents = seen.filter((e) => e.deviceId === deviceId);
+  const connected = (u: Unit) => snapshot.network && !u.sim.conditions.linkLost;
 
   function openDevice(id: string) {
     setDeviceId(id);
     setView("Command panel");
   }
-
   function openAlert(id: string) {
     setAlertId(id);
     setView("Alert inbox");
   }
-
-  function updateIncident(event: Incident, action: "acknowledge" | "close") {
-    const now = Date.now();
-    setSession((current) => ({
-      ...current,
-      incidents: current.incidents.map((entry) => {
-        if (entry.id !== event.id || entry.closedAt) return entry;
-        if (action === "acknowledge") return { ...entry, acknowledgedAt: entry.acknowledgedAt ?? now };
-        return entry.acknowledgedAt ? { ...entry, closedAt: now } : entry;
-      }),
-    }));
-    setMessage(action === "acknowledge" ? `${event.id} assigned in the demo to ${SCENARIOS[event.kind].team}.` : `${event.id} review closed.`);
+  function acknowledge(event: Incident) {
+    fleet.acknowledge(event.id);
+    setMessage(`${event.id} acknowledged and assigned in the demo to ${teamFor(event)}.`);
+  }
+  function close(event: Incident) {
+    fleet.close(event.id);
+    setMessage(`${event.id} review closed.`);
+  }
+  function assign(id: string, caseId: string | null) {
+    fleet.assign(id, caseId);
+    setMessage(caseId ? `${caseId} assigned to ${id}. The unit is now running.` : `${id} returned to the equipment bay and stopped.`);
   }
 
-  function setAssignment(id: string, caseId: string | null) {
-    setSession((current) => {
-      if (caseId && current.devices.some((unit) => unit.id !== id && unit.caseId === caseId)) return current;
-      return { ...current, devices: current.devices.map((unit) => unit.id === id ? {
-        ...unit, caseId, location: caseId ? unit.caseId ? unit.location : "Staging · Demo ward" : "Equipment bay",
-      } : unit) };
-    });
-    setMessage(caseId ? `${caseId} assigned to ${id}.` : `${id} returned to the equipment bay.`);
-  }
+  const newest = newEvents[0];
 
   return (
     <div className="ops">
@@ -128,30 +124,35 @@ export default function HospitalDashboard() {
       <div className="ops-shell">
         <div className="ops-main">
           <div className="ops-heading">
-            <div><h1>{view}</h1><p>{view === "Command panel" ? "Monitor and adjust a simulated device. No medical hardware is connected." : "Simulated records and signals for the StrideLung trolley."}</p></div>
-            {view === "Command panel" && <label>Device<select value={device.id} onChange={(event) => setDeviceId(event.target.value)}>
-              {session.devices.map((unit) => <option key={unit.id} value={unit.id}>{unit.id} · {unit.caseId ?? "Unassigned"}</option>)}
+            <div><h1>{view}</h1><p>{view === "Command panel" ? "The trolley’s own display, mirrored to the hospital. Alerts come from the trolley’s checks, not from this screen." : "Simulated records and signals for the StrideLung trolley fleet."}</p></div>
+            {view === "Command panel" && <label>Device<select value={deviceId} onChange={(event) => setDeviceId(event.target.value)}>
+              {units.map((unit) => <option key={unit.id} value={unit.id}>{unit.id} · {unit.caseId ?? "Not running"}</option>)}
             </select></label>}
             {view !== "Command panel" && <button className="ops-primary" onClick={() => setView("Command panel")}>Open command panel</button>}
           </div>
           <div className="ops-notification" aria-live="polite" role="status">
             {message && <span>{message}</span>}
-            {newEvents.length > 0 && view !== "Alert inbox" && <button onClick={() => openAlert(newEvents[0].id)}>Review newest alert</button>}
+            {newest && !(view === "Alert inbox" && incident?.id === newest.id) && <>
+              <span className={`ops-chip ${tierOf(newest) === "urgent" ? "urgent" : "routine"}`}>New alert</span>
+              <span>{unitLabel(newest.deviceId)} · {SUBSYSTEMS[newest.subsystem].label} · {TIER_LABEL[tierOf(newest)]}{newest.deviceId !== deviceId && view === "Command panel" ? " — from a unit you are not viewing" : ""}</span>
+              <button onClick={() => openAlert(newest.id)}>Review</button>
+            </>}
           </div>
 
           {view === "Fleet overview" && <>
             <div className="ops-stats">
-              <div><span>Fleet units</span><b>{session.devices.length}</b><small>StrideLung 01 · Concept</small></div>
-              <div><span>Assigned units</span><b>{assigned}</b><small>{session.devices.length - assigned} available</small></div>
+              <div><span>Running units</span><b>{running}</b><small>{units.length - running} in equipment bay</small></div>
               <div><span>Open alerts</span><b>{openEvents.length}</b><small>{newEvents.length} awaiting acknowledgment</small></div>
+              <div><span>Hospital network</span><b>{snapshot.network ? "Up" : "Down"}</b><small>{snapshot.network ? "Receiving trolley reports" : "No trolley data arriving"}</small></div>
             </div>
             <section className="ops-card">
               <h2>Device fleet</h2>
               <div className="ops-table-scroll"><table>
-                <thead><tr><th>Device</th><th>Assignment</th><th>Latest signal</th><th>Updated</th><th>Monitor</th></tr></thead>
-                <tbody>{session.devices.map((unit) => <tr key={unit.id}>
+                <thead><tr><th>Device</th><th>Assignment</th><th>Status</th><th>Last report</th><th>Monitor</th></tr></thead>
+                <tbody>{units.map((unit) => <tr key={unit.id}>
                   <th scope="row">{unit.id}</th><td>{unit.caseId ?? "Unassigned"}<small>{unit.location}</small></td>
-                  <td><Signal signal={unit.signal} /></td><td>{displayTime(unit.updatedAt)}</td>
+                  <td><UnitStatus unit={unit} incidents={snapshot.incidents} connected={connected(unit)} /></td>
+                  <td>{unit.caseId && hydrated ? displayTime(unit.lastReceivedAt) : "—"}</td>
                   <td><button aria-label={`Monitor ${unit.id}`} onClick={() => openDevice(unit.id)}>Monitor</button></td>
                 </tr>)}</tbody>
               </table></div>
@@ -159,18 +160,12 @@ export default function HospitalDashboard() {
           </>}
 
           {view === "Command panel" && <>
-            <DeviceConsole
-              key={device.id}
-              device={device}
-              settings={consoleSettings[device.id] ?? BASELINE_SETTINGS}
-              onSettings={(settings) => setConsoleSettings((current) => ({ ...current, [device.id]: settings }))}
-              onReport={notifyUpdate}
-            />
+            <CommandPanel fleet={fleet} snapshot={snapshot} unitId={deviceId} model={model} />
             <section className="ops-card">
-              <h2>Events for {device.id}</h2>
-              {deviceEvents.length === 0 ? <p>Send a fault scenario to see the alert and snapshot appear here.</p> : <ul className="ops-events">
+              <h2>Alerts received from {deviceId}</h2>
+              {deviceEvents.length === 0 ? <p>No alert received. Trigger a scenario in the “At the trolley” strip; the trolley’s own checks decide whether an alert follows.</p> : <ul className="ops-events">
                 {deviceEvents.map((event) => <li key={event.id}><button onClick={() => openAlert(event.id)}>
-                  <span><b>{SCENARIOS[event.kind].label}</b><small>{event.id} · {displayTime(event.createdAt)}</small></span>
+                  <span><b>{SUBSYSTEMS[event.subsystem].label} · {TIER_LABEL[tierOf(event)]}</b><small>{event.id} · {deliveryLine(event)}</small></span>
                   <span className="ops-chip">{eventState(event)}</span>
                 </button></li>)}
               </ul>}
@@ -179,29 +174,42 @@ export default function HospitalDashboard() {
 
           {view === "Alert inbox" && <div className="ops-inbox">
             <section className="ops-card"><h2>Hospital alert queue</h2>
-              {session.incidents.length === 0 ? <p>Run a fault scenario from the command panel to populate the inbox.</p> : <ul className="ops-events">
-                {session.incidents.map((event) => <li key={event.id}>
+              {seen.length === 0 ? <p>No alerts yet. Alerts arrive automatically when a running trolley’s reading stays outside its demo limit.</p> : <ul className="ops-events">
+                {seen.map((event) => <li key={event.id}>
                   <button aria-pressed={incident?.id === event.id} onClick={() => setAlertId(event.id)}>
-                    <span><b>{SCENARIOS[event.kind].label}</b><small>{event.deviceId} · {displayTime(event.createdAt)}</small></span>
-                    <span className={`ops-chip ${!event.closedAt && SCENARIOS[event.kind].priority === "High" ? "urgent" : ""}`}>{eventState(event)}</span>
+                    <span><b>{SUBSYSTEMS[event.subsystem].label} · {unitLabel(event.deviceId)}</b><small>{TIER_LABEL[tierOf(event)]} · {displayTime(event.deliveredAt)}{event.late ? " · late" : ""}</small></span>
+                    <span className={`ops-chip ${!event.closedAt && (tierOf(event) === "urgent" || tierOf(event) === "unavailable") ? "urgent" : ""}`}>{eventState(event)}</span>
                   </button>
                 </li>)}
               </ul>}
             </section>
-            {incident && <section className="ops-card">
-              <div className="ops-alert-title"><h2>{SCENARIOS[incident.kind].label}</h2><span className="ops-chip routine">{SCENARIOS[incident.kind].priority} priority</span></div>
-              <p>{incident.id} · {incident.deviceId} · {incident.caseId ?? "Unassigned"} · {incident.location}</p>
+            {incident && incident.hospital && <section className="ops-card">
+              <div className="ops-alert-title"><h2>{SUBSYSTEMS[incident.subsystem].label}</h2><span className={`ops-chip ${tierOf(incident) === "urgent" ? "urgent" : "routine"}`}>{TIER_LABEL[tierOf(incident)]}</span></div>
+              <p>{incident.id} · {unitLabel(incident.deviceId)} · {incident.deviceId === FLEET_ID ? "Hospital network outage" : incident.caseId ?? "Unassigned"} · {incident.location}</p>
+              <div className="ops-delivery">
+                <span>{deliveryLine(incident)}</span>
+                {incident.hospital.backInBand && <span className="ops-chip good">Signals back in band — review still open</span>}
+              </div>
+              <div className="ops-table-scroll"><table>
+                <thead><tr><th>Signal</th><th>Reading</th><th>Demo limit</th><th>State</th></tr></thead>
+                <tbody>{incident.hospital.signals.map((s) => <tr key={s.alarm}>
+                  <th scope="row">{ALARMS[s.alarm].label}</th><td>{s.value}</td><td>{ALARMS[s.alarm].band}</td>
+                  <td>{s.active ? `Out of band since ${displayTime(s.since)}` : `Back in band at ${displayTime(s.clearedAt)}`}</td>
+                </tr>)}</tbody>
+              </table></div>
               {/* The same generated image is used for the preview and the download. */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="ops-snapshot" width={560} height={280} alt={`Simulated ${SCENARIOS[incident.kind].subsystem.toLowerCase()} alert snapshot for ${incident.deviceId}`}
+              <img className="ops-snapshot" width={560} height={330} alt={`Simulated ${SUBSYSTEMS[incident.subsystem].label.toLowerCase()} alert snapshot for ${unitLabel(incident.deviceId)}`}
                 src={`data:image/svg+xml;charset=utf-8,${encodeURIComponent(eventSnapshot(incident))}`} />
               <div className="ops-next"><b>Next step</b><p>{incident.closedAt ? `Review closed at ${displayTime(incident.closedAt)}.` : incident.acknowledgedAt
-                ? `Review assigned to ${SCENARIOS[incident.kind].team} at ${displayTime(incident.acknowledgedAt)}. Open the command panel before closing the demo review.`
-                : `Acknowledge the report and assign the demo review to ${SCENARIOS[incident.kind].team}.`}</p></div>
+                ? `Assigned to ${teamFor(incident)} at ${displayTime(incident.acknowledgedAt)}. Check the command panel before closing the demo review.`
+                : `Acknowledge the alert and assign the demo review to ${teamFor(incident)}. Acknowledging here does not silence the trolley’s own alarm.`}</p>
+                {escalationLine(incident) && <p className="ops-escalated">{escalationLine(incident)}</p>}
+              </div>
               <div className="ops-actions">
-                {!incident.acknowledgedAt && <button className="ops-primary" onClick={() => updateIncident(incident, "acknowledge")}>Acknowledge and assign</button>}
-                {incident.acknowledgedAt && !incident.closedAt && <button className="ops-primary" onClick={() => updateIncident(incident, "close")}>Close demo review</button>}
-                <button onClick={() => openDevice(incident.deviceId)}>Open device panel</button>
+                {!incident.acknowledgedAt && !incident.closedAt && <button className="ops-primary" onClick={() => acknowledge(incident)}>Acknowledge and assign</button>}
+                {incident.acknowledgedAt && !incident.closedAt && <button className="ops-primary" onClick={() => close(incident)}>Close demo review</button>}
+                {incident.deviceId !== FLEET_ID && <button onClick={() => openDevice(incident.deviceId)}>Open device panel</button>}
                 <a className="ops-button" download={`${incident.id}-snapshot.svg`} href={`data:image/svg+xml;charset=utf-8,${encodeURIComponent(eventSnapshot(incident))}`}>Download snapshot</a>
               </div>
             </section>}
@@ -209,13 +217,13 @@ export default function HospitalDashboard() {
 
           {view === "Assignments" && <section className="ops-card">
             <h2>Fictional case assignments</h2>
-            <p>Assign an available demo case or return a unit to the equipment bay.</p>
+            <p>Assigning a demo case starts a unit; returning it to the equipment bay stops it. Open alerts stay in the inbox for review.</p>
             <div className="ops-table-scroll"><table>
               <thead><tr><th>Device</th><th>Location</th><th>Case assignment</th></tr></thead>
-              <tbody>{session.devices.map((unit) => <tr key={unit.id}><th scope="row">{unit.id}</th><td>{unit.location}</td><td>
-                <select aria-label={`Case for ${unit.id}`} value={unit.caseId ?? ""} onChange={(e) => setAssignment(unit.id, e.target.value || null)}>
+              <tbody>{units.map((unit) => <tr key={unit.id}><th scope="row">{unit.id}</th><td>{unit.location}</td><td>
+                <select aria-label={`Case for ${unit.id}`} value={unit.caseId ?? ""} onChange={(e) => assign(unit.id, e.target.value || null)}>
                   <option value="">Unassigned</option>
-                  {CASE_POOL.filter((id) => id === unit.caseId || !session.devices.some((entry) => entry.caseId === id)).map((id) => <option key={id}>{id}</option>)}
+                  {CASE_POOL.filter((id) => id === unit.caseId || !units.some((entry) => entry.caseId === id)).map((id) => <option key={id}>{id}</option>)}
                 </select>
               </td></tr>)}</tbody>
             </table></div>
@@ -229,15 +237,15 @@ export default function HospitalDashboard() {
               <tbody>
                 <tr><th scope="row">SL-D-001</th><td>Equipment inspection</td><td>Biomedical engineering</td><td>Planned demo check</td></tr>
                 <tr><th scope="row">SL-D-002</th><td>Circuit kit inventory</td><td>Supply team</td><td>Supplier quote pending</td></tr>
-                {session.incidents.filter((event) => event.kind === "service").map((event) => <tr key={event.id}>
-                  <th scope="row">{event.deviceId}</th><td>Service review · {event.id}</td><td>Biomedical engineering</td><td><button onClick={() => openAlert(event.id)}>{eventState(event)} · Open record</button></td>
+                {seen.filter((event) => event.subsystem === "service").map((event) => <tr key={event.id}>
+                  <th scope="row">{event.deviceId}</th><td>Service review · {event.id}</td><td>{teamFor(event)}</td><td><button onClick={() => openAlert(event.id)}>{eventState(event)} · Open record</button></td>
                 </tr>)}
               </tbody>
             </table></div>
           </section>}
 
           {view === "Commercial scenario" && <CommercialScenario />}
-          <p className="ops-footer">Demo session · Changes reset on reload · Notifications appear in this workspace</p>
+          <p className="ops-footer">Demo session · Simulated devices · Changes reset on reload · Notifications appear in this workspace only</p>
         </div>
       </div>
     </div>

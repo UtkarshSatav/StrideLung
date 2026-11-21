@@ -3,6 +3,7 @@
 import { partItems, scene } from "./generated";
 import { TrolleyStage } from "./TrolleyStage";
 import { HeroTrolleyStage } from "./HeroTrolleyStage";
+import { ConsoleTrolleyStage } from "./ConsoleTrolleyStage";
 import type { EngineScene } from "./engine";
 import type { Item } from "./types";
 
@@ -14,9 +15,10 @@ export function itemMarkup(item: Item) {
   return `<g class="it" data-c="${item.c}" data-s="${item.s}"${item.x ? ` data-x="${item.x}"` : ""} data-piece="${item.p}"${item.r ? ` data-ride="${item.r}"` : ""} data-k="${item.k}" data-m="${mx},${my},${mz}" data-n="${item.n}"${item.a ?? ""}>${item.t ? `<title>${item.t}</title>` : ""}${item.svg}</g>`;
 }
 
-export function TrolleyFigure({ hero = false }: { hero?: boolean }) {
+export function TrolleyFigure({ hero = false, variant }: { hero?: boolean; variant?: "explorer" | "hero" | "console" }) {
+  const kind = variant ?? (hero ? "hero" : "explorer");
   const items = Object.values(partItems).flat().sort((a, b) => a.i - b.i);
-  const clipId = hero ? "hero-handle-clip" : "sl-handle-clip";
+  const clipId = kind === "hero" ? "hero-handle-clip" : kind === "console" ? "console-handle-clip" : "sl-handle-clip";
   const content = items.map(itemMarkup).join("").replaceAll("url(#sl-handle-clip)", `url(#${clipId})`);
   const markup =
     `<defs><clipPath id="${clipId}"><path data-handle-clip d="${scene.handleClip}"/></clipPath></defs>` +
@@ -29,7 +31,14 @@ export function TrolleyFigure({ hero = false }: { hero?: boolean }) {
     P: scene.P, V: scene.V, EX: scene.EX, EY: scene.EY, EZ: scene.EZ, hinge: scene.hinge, doors: scene.doors,
     explode: scene.explode, spring: scene.spring, mass: { total: scene.mass.total }, subsystems: scene.subsystems,
   };
-  if (hero) {
+  if (kind === "console") {
+    return (
+      <ConsoleTrolleyStage scene={lite}>
+        <svg className="iso-svg" viewBox={`0 0 ${scene.W} ${scene.H}`} aria-hidden="true" dangerouslySetInnerHTML={{ __html: markup }} />
+      </ConsoleTrolleyStage>
+    );
+  }
+  if (kind === "hero") {
     return (
       <HeroTrolleyStage scene={lite}>
         <svg className="iso-svg" viewBox={`0 0 ${scene.W} ${scene.H}`} aria-hidden="true" dangerouslySetInnerHTML={{ __html: markup }} />

@@ -35,7 +35,7 @@
 .sl-led{fill:var(--anatomy-shade-0);stroke:var(--anatomy-lo);stroke-width:.4px;vector-effect:non-scaling-stroke}
 .sl-led[data-led="0"],.sl-led[data-led="1"],.sl-led[data-led="2"],.sl-led[data-led="3"]{fill:var(--anatomy-hi)}
 .sl-diffuser{fill:var(--anatomy-shade-1)}
-.sl-stage[data-blocked] .sl-diffuser{animation:sl-alarm 900ms steps(1,end) infinite}
+.sl-stage[data-blocked] .sl-diffuser,.sl-stage[data-alarm] .sl-diffuser{animation:sl-alarm 900ms steps(1,end) infinite}
 @keyframes sl-alarm{0%,49%{fill:var(--sl-elec)}50%,100%{fill:var(--anatomy-shade-1)}}
 
 /* the machine's display */
@@ -60,7 +60,7 @@
 .sl-door[data-shade="3"] .sl-door-face{fill:var(--anatomy-shade-3)}
 .sl-glass{fill:var(--anatomy-top);fill-opacity:.12;stroke:none;pointer-events:none}
 .sl-lens{fill:var(--anatomy-top);fill-opacity:.35;stroke:none}
-.sl-stage[data-blocked] .sl-lens{animation:sl-lens 900ms steps(1,end) infinite}
+.sl-stage[data-blocked] .sl-lens,.sl-stage[data-alarm] .sl-lens{animation:sl-lens 900ms steps(1,end) infinite}
 @keyframes sl-lens{0%,49%{fill:var(--sl-elec);fill-opacity:.85}50%,100%{fill:var(--anatomy-top);fill-opacity:.35}}
 .sl-glare{fill:var(--anatomy-lit);opacity:.06;pointer-events:none}
 .sl-door-fill{fill:var(--anatomy-paper);fill-opacity:0}
@@ -140,8 +140,11 @@
 .sl-chip b{color:var(--anatomy-strong);font-weight:600}
 .sl-calc{margin:10px 0 0;padding-top:8px;box-shadow:inset 0 1px 0 var(--sl-ring);color:var(--anatomy-text)}
 @media (max-width:640px){.sl-dl{grid-template-columns:1fr}.sl .iso-plate{padding:58px 6px 60px}.sl-label{width:100%}.sl .iso-plate-corner[data-corner="title"]{top:16px;left:0;right:auto;font-size:9.5px;letter-spacing:.06em}.sl .iso-plate-corner[data-corner="readout"]{max-width:100%;overflow:hidden;text-overflow:ellipsis}}
-@media (prefers-reduced-motion:reduce){.sl-stage[data-blocked] .sl-diffuser,.sl-stage[data-blocked] .sl-lens{animation:none;fill:var(--sl-elec)}}
+@media (prefers-reduced-motion:reduce){.sl-stage[data-blocked] .sl-diffuser,.sl-stage[data-blocked] .sl-lens,.sl-stage[data-alarm] .sl-diffuser,.sl-stage[data-alarm] .sl-lens{animation:none;fill:var(--sl-elec)}}
 .sl-lid .iso-fill,.sl-lid .iso-top{fill-rule:evenodd}
 .hint-touch{display:none}
 @media (hover:none),(max-width:560px){.hint-fine{display:none}.hint-touch{display:inline}}
 .sl-wall .iso-fill,.sl-wall .iso-shade{fill-rule:evenodd}
+
+/* console: no data arriving at the hospital — grey the mirrored model */
+.sl-stage[data-stale] .iso-svg{filter:grayscale(1);opacity:.5;transition:opacity 220ms,filter 220ms}

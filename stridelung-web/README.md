@@ -25,7 +25,15 @@ regenerating it.
 
 ## Hospital dashboard
 
-The **Hospital dashboard** link opens `/simulator`. Select **Command panel** and choose a unit to see simulated pressure, flow, and pressure-drop waveforms. Adjust the simulation settings or freeze the traces to inspect the time window. Send a fault scenario to update the device status and create an inbox alert with a downloadable snapshot. Acknowledge the event to assign the demo review. The session resets on reload.
+The **Hospital dashboard** link opens `/simulator`. It runs a simulated fleet of ten StrideLung trolleys in the browser: six with a demo case assigned are running, four sit idle in the equipment bay.
+
+**Command panel** is presented as the trolley's own display (C20) mirrored to the hospital: the landing page's trolley model (live flows, the affected part highlighted, the alarm light), pressure / flow / pressure-drop waveforms with shaded demo limits, and readout tiles. The mirrored display is read-only. The dashed **At the trolley (demo)** strip below it stands in for staff at the bedside: settings, scenarios (drainage restriction, oxygenator resistance rising, gas interrupted, mains unplugged, thermal fault, pump standby, telemetry link lost, service reminder), mobility sessions, the whole-fleet network switch and 1× / 10× demo time.
+
+Alerts are not sent from the dashboard. Each trolley checks its own readings against demo limits; a reading that stays out of band for 3 s raises an alert, grouped one per subsystem, with delivery state (queued on the trolley, delivered, delivered late), "back in band", acknowledgement and a 30 s demo escalation. When data stops arriving the mirror goes stale ("No data since …") and a "Monitor unavailable" alert opens. Nothing goes wrong unless the presenter triggers it. The session resets on reload.
+
+Demo walk-through: on SL-D-003 start **Oxygenator resistance rising** with **Demo time ×10**, switch to SL-D-001 — the SL-D-003 alert arrives while you watch another unit. Untick **Hospital network up**, trigger a fault, then reconnect to show the queued alert delivered late.
+
+Simulation and alert logic is framework-free and unit-tested: `npm test` (Node's built-in test runner).
 
 ## What's where
 
@@ -36,7 +44,8 @@ src/
     components/page.tsx          all 27 components, each drawn on its own (filterable)
     components/[slug]/page.tsx   one statically generated page per component
     parallel-oxygenator/page.tsx the parallel-oxygenator concept exploration (figure, review table, topology, limits)
-    simulator/                   hospital dashboard, console simulation, and alert snapshots
+    simulator/                   hospital dashboard: trolleySim.ts (signal model), alerts.ts (demo limits, incidents),
+                                 fleet.ts (store), CommandPanel.tsx, TrolleyStrip.tsx, alert snapshots
   trolley/
     register.ts                  the component register — single source of truth for every row's data
     geometry/                    generator-only code (never shipped to the browser)
