@@ -1,0 +1,91 @@
+{
+  "study": {
+    "title": "First Use of a Novel Extracorporeal Life Support System: Successful Application in Tracheoesophageal Fistula Repair",
+    "authors": ["Alwardt et al."],
+    "year": 2022,
+    "pmc_id": "PMC9639688",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9639688/",
+    "case_description": "First human application of a novel ECLS system during high-risk tracheoesophageal fistula repair."
+  },
+  "phases": {
+    "intraoperative": {
+      "phase_name": "Intraoperative",
+      "reporting_type": "range",
+      "ecmo_machine": {
+        "blood_flow": { "min": 3.2, "max": 3.9, "unit": "L/min" },
+        "pump_speed": { "min": 4600, "max": 5000, "unit": "RPM" },
+        "sweep_gas_flow": { "min": 2.0, "max": 3.0, "unit": "L/min" },
+        "ecmo_fio2": { "min": 70, "max": 100, "unit": "%" }
+      },
+      "circuit_measurements": {
+        "pre_oxy_pressure": { "min": 140, "max": 167, "unit": "mmHg" },
+        "post_oxy_pressure": { "min": 124, "max": 149, "unit": "mmHg" },
+        "trans_oxy_pressure": { "min": 16, "max": 19, "unit": "mmHg" },
+        "art_blood_temp": { "min": 36.1, "max": 37.1, "unit": "°C" }
+      },
+      "patient_measurements": {
+        "pao2": { "min": 68, "max": 303, "unit": "mmHg" },
+        "paco2": { "min": 25.3, "max": 41.7, "unit": "mmHg" },
+        "ph": { "min": 7.31, "max": 7.51, "unit": "" }
+      },
+      "laboratory_measurements": {
+        "act": { "min": 120, "max": 184, "unit": "seconds" },
+        "haemoglobin": { "min": 7.9, "max": 10.1, "unit": "g/dL" },
+        "lactate": { "min": 0.86, "max": 3.11, "unit": "mmol/L" }
+      }
+    },
+    "icu_arrival": {
+      "phase_name": "ICU Arrival",
+      "reporting_type": "point",
+      "ecmo_machine": {
+        "blood_flow": { "value": 3.2, "unit": "L/min" },
+        "pump_speed": { "value": 4700, "unit": "RPM" },
+        "sweep_gas_flow": { "value": 3.0, "unit": "L/min" },
+        "ecmo_fio2": { "value": 100, "unit": "%" }
+      },
+      "circuit_measurements": {
+        "pre_oxy_pressure": { "value": 151, "unit": "mmHg" },
+        "post_oxy_pressure": { "value": 133, "unit": "mmHg" },
+        "trans_oxy_pressure": { "value": 18, "unit": "mmHg" },
+        "art_blood_temp": { "value": 36.6, "unit": "°C" }
+      },
+      "patient_measurements": {
+        "pao2": { "value": 111, "unit": "mmHg" },
+        "paco2": { "value": 35.4, "unit": "mmHg" },
+        "ph": { "value": 7.41, "unit": "" }
+      },
+      "laboratory_measurements": {
+        "act": { "value": 107, "unit": "seconds" },
+        "haemoglobin": { "value": 9.2, "unit": "g/dL" },
+        "lactate": { "value": 2.01, "unit": "mmol/L" }
+      }
+    },
+    "postoperative": {
+      "phase_name": "Postoperative",
+      "reporting_type": "range",
+      "ecmo_machine": {
+        "blood_flow": { "min": 3.1, "max": 3.4, "unit": "L/min" },
+        "pump_speed": { "min": 4700, "max": 4700, "unit": "RPM" },
+        "sweep_gas_flow": { "min": 1.0, "max": 5.0, "unit": "L/min" },
+        "ecmo_fio2": { "min": 21, "max": 100, "unit": "%" }
+      },
+      "circuit_measurements": {
+        "pre_oxy_pressure": { "min": 140, "max": 157, "unit": "mmHg" },
+        "post_oxy_pressure": { "min": 124, "max": 141, "unit": "mmHg" },
+        "trans_oxy_pressure": { "min": 13, "max": 19, "unit": "mmHg" },
+        "art_blood_temp": { "min": 36.1, "max": 36.6, "unit": "°C" }
+      },
+      "patient_measurements": {
+        "pao2": { "min": 57, "max": 141, "unit": "mmHg" },
+        "paco2": { "min": 35.3, "max": 53.0, "unit": "mmHg" },
+        "ph": { "min": 7.32, "max": 7.50, "unit": "" }
+      },
+      "laboratory_measurements": {
+        "act": { "min": 91, "max": 147, "unit": "seconds" },
+        "haemoglobin": { "min": 7.9, "max": 10.3, "unit": "g/dL" },
+        "lactate": { "min": 1.0, "max": 2.6, "unit": "mmol/L" }
+      }
+    }
+  }
+}
+
